@@ -4,7 +4,7 @@
 
 **B.S.E. Candidate, Data Science** · University of Michigan, Ann Arbor
 
-`x.sum(dim=-1)`
+
 
 <img alt="Profile views" src="https://komarev.com/ghpvc/?username=jackiectl&label=Profile%20Views&color=d97706&style=flat">
 <img alt="Followers" src="https://img.shields.io/github/followers/jackiectl?style=flat&color=d97706&labelColor=3c3836&logo=github">
@@ -112,15 +112,13 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 - [Email](mailto:ctlang@umich.edu)
 - **jackiectl.github.io** — 2D site — writing, projects, CV *(coming soon)*
 - **jackiectl.com** — Dim Sum Lab — a 3D dim-sum parlour you can walk through *(coming soon)*
-- **Google Scholar** — with the first publication *(coming soon)*
+- **Google Scholar** — *(coming soon)*
 
 ---
 
 <div align="center">
 
-**DIM SUM LABS · 點心**
 
-dim = dimension, sum = reduce. Dim Sum = 點心 = summing along a dimension.
 
 <sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub>
 
