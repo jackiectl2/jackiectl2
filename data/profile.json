@@ -1,0 +1,143 @@
+{
+  "_note": "Machine-readable projection of ../../PROFILE.md (the single source of truth). Edit PROFILE.md first, then mirror the change here and run `python3 build.py`. README.md is GENERATED — never hand-edit it. Adding a project = adding one entry below, with no code change (CLAUDE.md 铁律 B).",
+
+  "identity": {
+    "display": "Tianlang (Jackie) Chen",
+    "name_zh": "陈天朗",
+    "github": "jackiectl",
+    "email": "ctlang@umich.edu",
+    "role": "B.S.E. Candidate, Data Science",
+    "affiliation": "University of Michigan, Ann Arbor"
+  },
+
+  "brand": {
+    "lab": "DIM SUM LABS · 點心",
+    "meme": "x.sum(dim=-1)",
+    "gloss": "dim = dimension, sum = reduce. Dim Sum = 點心 = summing along a dimension."
+  },
+
+  "bio": "B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across LLM-guided incentive design, genomic foundation models, and AI-guided environmental sensing. Previously Mechanical Engineering at Shanghai Jiao Tong University.",
+
+  "cards": {
+    "_note": "Verified live 2026-07-11. github-readme-stats.vercel.app and github-profile-trophy are BOTH DEAD (DEPLOYMENT_PAUSED / 402) — do not use them. Re-verify before adding any new card.",
+    "stats": {
+      "base": "https://github-stats-extended.vercel.app/api",
+      "query": "username={u}&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000",
+      "theme_dark": "gruvbox",
+      "theme_light": "gruvbox_light",
+      "height": "170",
+      "alt": "GitHub stats for {u}"
+    },
+    "streak": {
+      "base": "https://streak-stats.demolab.com/",
+      "query": "user={u}&hide_border=true&background=00000000",
+      "theme_dark": "gruvbox",
+      "theme_light": "gruvbox_light",
+      "height": "170",
+      "alt": "Contribution streak for {u}"
+    },
+    "graph": {
+      "base": "https://github-readme-activity-graph.vercel.app/graph",
+      "query": "username={u}&hide_border=true&area=true&custom_title=Contribution%20Graph",
+      "theme_dark": "gruvbox",
+      "theme_light": "github-light",
+      "alt": "Contribution graph for {u}"
+    },
+    "views": "https://komarev.com/ghpvc/?username={u}&label=Profile%20Views&color=d97706&style=flat",
+    "followers": "https://img.shields.io/github/followers/{u}?style=flat&color=d97706&labelColor=3c3836&logo=github"
+  },
+
+  "timeline": [
+    {
+      "when": "2026 — present",
+      "what": "Research, University of Michigan",
+      "detail": "Five concurrent lines: LLM incentive design, genomic foundation models, environmental sensing, materials-science tooling, microbial representation learning."
+    },
+    {
+      "when": "2025 — present",
+      "what": "B.S.E. Data Science, University of Michigan, Ann Arbor",
+      "detail": "Machine Learning · Computer Graphics & Generative Models · Computational Linguistics · Algorithms & Data Structures · Probability & Statistics."
+    },
+    {
+      "when": "2025.05",
+      "what": "Teaching Assistant, General Physics",
+      "detail": ""
+    },
+    {
+      "when": "2025.03",
+      "what": "Teaching Assistant, English Academic Writing",
+      "detail": ""
+    },
+    {
+      "when": "2025.01",
+      "what": "MCM/ICM — Honorable Mention",
+      "detail": "COMAP Mathematical Contest in Modeling."
+    },
+    {
+      "when": "2024 — 2025",
+      "what": "Mars Asia — Global IT Service Center",
+      "detail": "WeCom full-stack development (JavaScript, Node.js, Vue.js): API and interface work, data migration, cross-platform retrieval, and automation that kept operations continuous through a system migration."
+    },
+    {
+      "when": "2023 — 2025.05",
+      "what": "Mechanical Engineering, Shanghai Jiao Tong University",
+      "detail": "Applied Linear Algebra · Dynamical Systems · Design & Manufacturing · Dynamics & Vibrations."
+    }
+  ],
+
+  "research": [
+    {
+      "id": "R1",
+      "title": "LLM for Incentive Design in Mobility Systems",
+      "hook": "Can an LLM design the incentives that make shared mobility actually work?",
+      "detail": "An LLM-guided workflow that generates and evaluates interpretable incentive policies for ride-hailing, transit, and shared vehicles — pairing learning-based methods with classical optimization."
+    },
+    {
+      "id": "R2",
+      "title": "EPCOT Foundation Model — TSS-to-Expression Data Pipeline",
+      "hook": "Made a genomic foundation model 2–5× faster to train — and found a 50 kb bug that was quietly wrecking its interpretability.",
+      "detail": "Pseudobulk pipeline from raw snMultiome (1 bp sparse ATAC → 600 kb HDF5 windows; CP10K-normalized 19,264-gene RNA vectors across 7 cell types). Five bit-equivalent training optimizations for a 2–5× speedup at identical numerics. Reset-head fine-tuning for small-data generalization. Located and fixed a ~50 kb TSS-bin offset."
+    },
+    {
+      "id": "R3",
+      "title": "AI-Guided Environmental Sensing & Adaptive Monitoring",
+      "hook": "Where should you put the next sensor in Lake Michigan? Let uncertainty decide.",
+      "detail": "Reproducible ingestion → reconstruction → uncertainty-quantification workflow for the sparse, seasonal Great Lakes, comparing random / grid / uncertainty-aware sensor-placement rules."
+    },
+    {
+      "id": "R4",
+      "title": "Applets for Data Analytics in Materials Science",
+      "hook": "Turning materials-science analysis into something you can just... upload a CSV to.",
+      "detail": "JavaScript front end + Python back end serving the materials community: users upload datasets and analyze them with SOTA models and fitting methods, built as reusable FAIR-compliant modules."
+    },
+    {
+      "id": "R5",
+      "title": "Functional Genomic Representation Learning for Microbial Communities",
+      "hook": "A parameter-free way to turn a whole microbial community into one honest vector.",
+      "detail": "Proteogenic k-mer tokenization yields interpretable, parameter-free genome encodings that plug into both classical statistics and pretrained sequence models (Evo, ESM, ProtT5). Abundance-weighted community embeddings, leakage-safe features, permutation tests and honest cross-validation."
+    }
+  ],
+
+  "publications": [],
+
+  "skills": [
+    { "group": "Languages",       "items": ["Python", "C", "C++", "JavaScript", "SQL", "R", "MATLAB", "Java", "Bash"] },
+    { "group": "LLM & Agentic AI", "items": ["Prompt Engineering", "Structured Prompting", "RAG", "LLM Workflow Design", "Agent-Guided Code Generation", "Output Validation", "Hallucination Mitigation"] },
+    { "group": "ML & Data",        "items": ["PyTorch", "scikit-learn", "Gaussian Processes", "Foundation-Model Fine-Tuning"] },
+    { "group": "Web",              "items": ["Node.js", "Vue.js", "HTML", "CSS"] },
+    { "group": "Data Stores",      "items": ["MySQL", "SQLite", "HDF5"] },
+    { "group": "Tools",            "items": ["Git", "Slurm / HPC", "Blender", "SolidWorks"] },
+    { "group": "Spoken",           "items": ["English", "Mandarin", "Cantonese"] }
+  ],
+
+  "links": [
+    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/", "badge": "LinkedIn-Tianlang%20(Jackie)%20Chen-0A66C2?style=flat&logo=linkedin&logoColor=white", "live": true },
+    { "label": "Email",    "url": "mailto:ctlang@umich.edu", "badge": "Email-ctlang%40umich.edu-D14836?style=flat&logo=maildotru&logoColor=white", "live": true }
+  ],
+
+  "coming_soon": [
+    { "label": "jackiectl.github.io", "what": "2D site — writing, projects, CV" },
+    { "label": "jackiectl.com", "what": "Dim Sum Lab — a 3D dim-sum parlour you can walk through" },
+    { "label": "Google Scholar", "what": "with the first publication" }
+  ]
+}
