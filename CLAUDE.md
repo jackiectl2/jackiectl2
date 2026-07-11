@@ -52,11 +52,11 @@ fill 是 `#427b58`（深绿）不是浅灰，白底上读得清。
 fine-grained PAT 若没有 `workflows` 权限，**push 含 `.github/workflows/` 的 commit 会被 GitHub 直接拒绝**，
 反而把首推搞挂。要加的话，先去 PAT 设置里给这个仓库开 Workflows 权限。
 
-## 4. 待确认
+## 4. 状态 / 待办
 
-- ⚠ **Skills 里的 `ML & Data`（PyTorch / scikit-learn / Gaussian Processes / Foundation-Model
-  Fine-Tuning）和 `Tools` 里的 `Slurm / HPC` 是 Claude 补的，`PROFILE.md` §6 原本没有。**
-  依据是全局 CLAUDE.md 和 R2/R5 的实际内容。**待用户确认**；不属实就从 `profile.json` 删掉。
-- 首推之后去 profile 页**肉眼确认三张卡片都出图**（服务挂掉时 GitHub 会显示破图）。
+- ✅ Skills 里的 `ML & Data`（PyTorch / scikit-learn / Gaussian Processes / Foundation-Model
+  Fine-Tuning / HDF5）和 `Slurm / HPC` **已由用户确认属实**（2026-07-11）。
+  🔴 **但 `cv/` 里还没补** —— 见 `PROFILE.md` §6 的红字。
+- ⬜ push 之后去 profile 页**肉眼确认三张卡片都出图**（服务挂掉时 GitHub 显示破图）。
 - Publications 现在是 "In preparation."（铁律 B ④ 要求板块常驻）。有论文了往
-  `profile.json` 的 `publications: []` 里加，板块自动填充。
+  `profile.json` 的 `publications: []` 里加，板块自动从 "In preparation" 切成真条目 —— 已实测。
