@@ -140,6 +140,41 @@
         }
     ],
     "publications": [],
+    "coursework": [
+        {
+            "school": "University of Michigan, Ann Arbor",
+            "when": "2025 — present",
+            "items": [
+                "Machine Learning",
+                "Computer Graphics & Generative Models",
+                "Computational Linguistics",
+                "Algorithms & Data Structures",
+                "Probability & Statistics",
+                "Statistics & Data Analysis",
+                "PAT 200 — Introduction to Electronic Music Production"
+            ]
+        },
+        {
+            "school": "Shanghai Jiao Tong University — UM-SJTU Joint Institute",
+            "when": "2023 — 2025",
+            "items": [
+                "Applied Linear Algebra",
+                "Dynamical Systems",
+                "Design & Manufacturing",
+                "Dynamics & Vibrations"
+            ]
+        }
+    ],
+    "music": {
+        "course": "PAT 200 — Introduction to Electronic Music Production",
+        "org": "Performing Arts Technology, School of Music, Theatre & Dance, University of Michigan",
+        "note": "Electronic music production. One of these may end up as the loop you are listening to in this room.",
+        "tracks": []
+    },
+    "sports": {
+        "note": "",
+        "items": []
+    },
     "skills": [
         {
             "group": "Languages",
@@ -248,6 +283,9 @@
         "timeline_more": "To be continued · 敬請期待",
         "research_more": "More steamers on the next cart · 敬請期待",
         "publications_none": "In preparation.",
-        "experience_more": "Next role, next cart · 敬請期待"
+        "experience_more": "Next role, next cart · 敬請期待",
+        "coursework_more": "More on the menu each term · 敬請期待",
+        "music_none": "Recordings not uploaded yet · 敬請期待",
+        "sports_none": "To be filled in · 敬請期待"
     }
 }
