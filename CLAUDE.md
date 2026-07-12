@@ -76,6 +76,10 @@ README.md           ← 生成物。手改会被下次 build 覆盖
 
 - SVG 里**不能有 `<style>` 或 `<script>`** —— GitHub 渲染 README 里的 SVG 时会把它们清洗掉。
   一律用 inline `fill=` 属性。
+- **README 里引用这两个 SVG 用相对路径（`assets/...`）是安全的，不用换成绝对 raw URL。**
+  GitHub 在 **profile 页**上也会按仓库上下文把它重写成 `/jackiectl/jackiectl/raw/main/assets/...`。
+  已用正面对照验证：`codeSTACKr` 的 profile 页把 `img/globe-light.svg` 重写后**返回 200**。
+  好处：走 `/raw/` 不过 camo，**没有缓存陈旧问题**，bot 一提交就立刻更新。
 - `contrib.py` 要在**两个 Python 上都能跑**：本机 Great Lakes 是 **3.6**（没有
   `datetime.fromisoformat`），Action 里的 ubuntu-latest 是 3.12。**别用 3.7+ 语法。**
 - 本机没有 SVG 光栅化工具（无 rsvg / inkscape；ImageMagick 没编 Freetype，**文字渲染不出来**）。
