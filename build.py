@@ -92,8 +92,12 @@ def build(d):
     add(themed_card(cards["stats"], user))
     add(themed_card(cards["streak"], user))
     add("")
-    contrib = cards["contributions"]
-    add(local_card(contrib, contrib["months"]))
+    # cards.active_graph decides which contribution graph ships; the other stays configured.
+    if cards.get("active_graph") == "monthly":
+        contrib = cards["contributions"]
+        add(local_card(contrib, contrib["months"]))
+    else:
+        add(themed_card(cards["graph"], user))
     add("")
     add("</div>")
     add("")

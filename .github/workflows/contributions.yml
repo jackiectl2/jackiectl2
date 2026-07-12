@@ -23,7 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Parked while the README ships the daily card (cards.active_graph == "daily").
+      # The cron stays on purpose: flip that one word to "monthly" and this resumes by itself,
+      # with no second edit here.
+      - id: mode
+        run: |
+          mode=$(python3 -c "import json;print(json.load(open('data/profile.json'))['cards'].get('active_graph','daily'))")
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          [ "$mode" = "monthly" ] || echo "active_graph=$mode — monthly graph is parked, skipping"
+
       - name: Redraw the monthly bars
+        if: steps.mode.outputs.mode == 'monthly'
         env:
           # The default token can read a public contributionsCollection. If GitHub ever
           # tightens that, put a PAT with read:user in a repo secret and use it here.
@@ -31,9 +41,11 @@ jobs:
         run: python3 tools/contrib.py
 
       - name: Rebuild README from the data
+        if: steps.mode.outputs.mode == 'monthly'
         run: python3 build.py
 
       - name: Commit if the numbers moved
+        if: steps.mode.outputs.mode == 'monthly'
         run: |
           # Commit as the bot, NOT as jackiectl. GitHub credits contributions to the commit
           # author, so a commit authored by the owner here would itself become a contribution
