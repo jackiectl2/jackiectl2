@@ -222,5 +222,10 @@
       "label": "Google Scholar",
       "what": ""
     }
-  ]
+  ],
+  "labels": {
+    "timeline_more": "To be continued · 敬請期待",
+    "research_more": "More steamers on the next cart · 敬請期待",
+    "publications_none": "In preparation."
+  }
 }

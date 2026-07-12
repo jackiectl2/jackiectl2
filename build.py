@@ -3,7 +3,7 @@
 
 README.md is generated — edit data/profile.json (and PROFILE.md upstream), never the
 README itself. Adding a project or a timeline row must never require touching this file:
-everything here loops over the data (CLAUDE.md 铁律 B).
+everything here loops over the data (see the no-hardcoded-counts rule in CLAUDE.md).
 
     python3 build.py            # write README.md
     python3 build.py --check    # exit 1 if README.md is stale (for CI)
@@ -58,6 +58,7 @@ def local_card(card, n):
 
 def build(d):
     ident, brand, cards = d["identity"], d["brand"], d["cards"]
+    lab = d["labels"]
     user = ident["github"]
     L = []
     add = L.append
@@ -110,8 +111,8 @@ def build(d):
         if t.get("detail"):
             line += "  \n  %s" % t["detail"]
         add(line)
-    # 铁律 B ③: headroom must be *visible*, not a silent gap.
-    add("- `…` · *To be continued · 敬請期待*")
+    # Headroom has to be *visible*, not a silent gap.
+    add("- `…` · *%s*" % lab["timeline_more"])
     add("")
 
     # ---- research -----------------------------------------------------------
@@ -128,17 +129,17 @@ def build(d):
         add("")
         add("</details>")
         add("")
-    add("*More steamers on the next cart · 敬請期待*")
+    add("*%s*" % lab["research_more"])
     add("")
 
-    # ---- publications: the section exists even when empty (铁律 B ④) ---------
+    # ---- publications: the section exists even when empty ---------------------
     add("## Publications")
     add("")
     if d["publications"]:
         for p in d["publications"]:
             add("- %s" % p)
     else:
-        add("*In preparation.*")
+        add("*%s*" % lab["publications_none"])
     add("")
 
     # ---- skills -------------------------------------------------------------
