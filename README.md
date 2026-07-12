@@ -36,7 +36,7 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 ## Timeline
 
 - `2026 — present` · **Research, University of Michigan**  
-  Five concurrent lines: LLM incentive design, genomic foundation models, environmental sensing, materials-science tooling, microbial representation learning.
+  LLM incentive design, genomic foundation models, environmental sensing, materials-science tooling, microbial representation learning.
 - `2025 — present` · **B.S.E. Data Science, University of Michigan, Ann Arbor**  
   Machine Learning · Computer Graphics & Generative Models · Computational Linguistics · Algorithms & Data Structures · Probability & Statistics.
 - `2025.05` · **Teaching Assistant, General Physics**
