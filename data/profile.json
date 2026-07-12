@@ -197,23 +197,28 @@
   ],
   "links": [
     {
+      "label": "Website",
+      "url": "https://jackiectl.github.io",
+      "badge": "Website-jackiectl.github.io-b2382c?style=flat&logo=jekyll&logoColor=white",
+      "icon": "globe",
+      "live": true
+    },
+    {
       "label": "LinkedIn",
       "url": "https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/",
       "badge": "LinkedIn-Tianlang%20(Jackie)%20Chen-0A66C2?style=flat&logo=linkedin&logoColor=white",
-      "live": true
+      "live": true,
+      "icon": "linkedin"
     },
     {
       "label": "Email",
       "url": "mailto:ctlang@umich.edu",
       "badge": "Email-ctlang%40umich.edu-D14836?style=flat&logo=maildotru&logoColor=white",
-      "live": true
+      "live": true,
+      "icon": "envelope-o"
     }
   ],
   "coming_soon": [
-    {
-      "label": "jackiectl.github.io",
-      "what": "2D site — writing, projects, CV"
-    },
     {
       "label": "jackiectl.com",
       "what": "Dim Sum Parlor — a 3D teahouse you can walk through"
