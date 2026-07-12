@@ -168,8 +168,24 @@
     "music": {
         "course": "PAT 200 — Introduction to Electronic Music Production",
         "org": "Performing Arts Technology, School of Music, Theatre & Dance, University of Michigan",
-        "note": "Electronic music production. One of these may end up as the loop you are listening to in this room.",
-        "tracks": []
+        "note": "Electronic music production. The beat looping under this room right now is the first one below — same track, pulled down to background level.",
+        "tracks": [
+            {
+                "title": "PUSH — Beat Making",
+                "file": "push-beat-making-loop.mp3",
+                "note": "Made on an Ableton Push. Thirty-two bars, which is why it loops cleanly — this is what you are hearing in the parlor, at full level."
+            },
+            {
+                "title": "PUSH — Beat Making (assignment cut)",
+                "file": "push-beat-making.mp3",
+                "note": "The longer version handed in for the course."
+            },
+            {
+                "title": "Composition 1, Part 2",
+                "file": "composition-1-part-2.mp3",
+                "note": "Built from objects rather than instruments — steel chopsticks, running water, a doorknob, a passport hitting a table. Recorded, reversed, and played back as a kit. Fitting, for a dim sum parlor."
+            }
+        ]
     },
     "sports": {
         "note": "",
