@@ -7,6 +7,22 @@ GitHub **profile README** 仓库：`github.com/jackiectl/jackiectl`
 
 ---
 
+## 0. 🔴 踩过的坑：README 在仓库页正常，profile 页却什么都不显示
+
+**根因**：GitHub 判定「这是 profile README 仓库」是在**创建仓库那一刻**做的。
+本仓库建于 `2026-07-11 21:52`，而用户名 `aevum-orrin` → `jackiectl` 的改名 `22:01` 才生效 ——
+**建的时候仓库名和当时的用户名对不上**，标记没打上；后来名字虽然匹配了，GitHub 不会追溯补。
+
+**症状**（已可复现地验证）：`github.com/jackiectl/jackiectl` 仓库页 README 渲染正常，
+但 `github.com/jackiectl` 的 HTML 里 `markdown-body` / `entry-content` / `profile-readme`
+标记**全是 0**（对照组 `anuraghazra`、`sindresorhus` 都是 1）。四个官方条件全部满足也没用。
+
+**修法**：去仓库页点 **「Share to profile」** 按钮。**只能在 UI 点，没有 API / `gh` 命令。**
+
+**教训**：先改用户名 → **等改名生效** → 再建仓库。顺序反了就得手动补这一下。
+
+---
+
 ## 1. 最重要的一条：README.md 是**生成物**，不要手改
 
 ```

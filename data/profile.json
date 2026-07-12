@@ -11,9 +11,12 @@
   },
 
   "brand": {
-    "lab": "DIM SUM LABS · 點心",
+    "name": "Dim Sum Parlor",
+    "lab": "DIM SUM PARLOR · 點心",
     "meme": "x.sum(dim=-1)",
-    "gloss": "dim = dimension, sum = reduce. Dim Sum = 點心 = summing along a dimension."
+    "gloss": "dim = dimension, sum = reduce. Dim Sum = 點心 = summing along a dimension.",
+    "_show_in_readme": "Owner removed the meme line and the brand footer from the README on 2026-07-11 (commit 2adbf81). The facts stay here because the 3D site still needs them — this flag only governs the README.",
+    "show_in_readme": false
   },
 
   "bio": "B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across LLM-guided incentive design, genomic foundation models, and AI-guided environmental sensing. Previously Mechanical Engineering at Shanghai Jiao Tong University.",
@@ -137,7 +140,7 @@
 
   "coming_soon": [
     { "label": "jackiectl.github.io", "what": "2D site — writing, projects, CV" },
-    { "label": "jackiectl.com", "what": "Dim Sum Lab — a 3D dim-sum parlour you can walk through" },
-    { "label": "Google Scholar", "what": "with the first publication" }
+    { "label": "jackiectl.com", "what": "Dim Sum Parlor — a 3D teahouse you can walk through" },
+    { "label": "Google Scholar", "what": "" }
   ]
 }

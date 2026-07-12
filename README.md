@@ -4,8 +4,6 @@
 
 **B.S.E. Candidate, Data Science** · University of Michigan, Ann Arbor
 
-
-
 <img alt="Profile views" src="https://komarev.com/ghpvc/?username=jackiectl&label=Profile%20Views&color=d97706&style=flat">
 <img alt="Followers" src="https://img.shields.io/github/followers/jackiectl?style=flat&color=d97706&labelColor=3c3836&logo=github">
 <a href="https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-Tianlang%20(Jackie)%20Chen-0A66C2?style=flat&logo=linkedin&logoColor=white"></a>
@@ -111,14 +109,12 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 - [LinkedIn](https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/)
 - [Email](mailto:ctlang@umich.edu)
 - **jackiectl.github.io** — 2D site — writing, projects, CV *(coming soon)*
-- **jackiectl.com** — Dim Sum Lab — a 3D dim-sum parlour you can walk through *(coming soon)*
-- **Google Scholar** — *(coming soon)*
+- **jackiectl.com** — Dim Sum Parlor — a 3D teahouse you can walk through *(coming soon)*
+- **Google Scholar** *(coming soon)*
 
 ---
 
 <div align="center">
-
-
 
 <sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub>
 

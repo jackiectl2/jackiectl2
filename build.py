@@ -57,8 +57,9 @@ def build(d):
     add("")
     add("**%s** · %s" % (ident["role"], ident["affiliation"]))
     add("")
-    add("`%s`" % brand["meme"])
-    add("")
+    if brand.get("show_in_readme"):
+        add("`%s`" % brand["meme"])
+        add("")
     badges = ['<img alt="Profile views" src="%s">' % cards["views"].replace("{u}", user),
               '<img alt="Followers" src="%s">' % cards["followers"].replace("{u}", user)]
     for link in d["links"]:
@@ -138,7 +139,8 @@ def build(d):
     for link in d["links"]:
         add("- [%s](%s)" % (link["label"], link["url"]))
     for c in d["coming_soon"]:
-        add("- **%s** — %s *(coming soon)*" % (c["label"], c["what"]))
+        what = " — %s" % c["what"] if c.get("what") else ""
+        add("- **%s**%s *(coming soon)*" % (c["label"], what))
     add("")
 
     # ---- footer -------------------------------------------------------------
@@ -146,10 +148,11 @@ def build(d):
     add("")
     add('<div align="center">')
     add("")
-    add("**%s**" % brand["lab"])
-    add("")
-    add("%s" % brand["gloss"])
-    add("")
+    if brand.get("show_in_readme"):
+        add("**%s**" % brand["lab"])
+        add("")
+        add("%s" % brand["gloss"])
+        add("")
     add("<sub>A stack of steamers, reduced along the last dimension, is one %s.</sub>" % ident["display"])
     add("")
     add("</div>")
