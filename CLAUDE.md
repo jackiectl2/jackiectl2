@@ -44,11 +44,42 @@ README.md           ← 生成物。手改会被下次 build 覆盖
 |---|---|
 | `github-stats-extended.vercel.app` (MIT) | ✅ 用中。stats 卡片 |
 | `streak-stats.demolab.com` | ✅ 用中。连续贡献 |
-| `github-readme-activity-graph.vercel.app` | ✅ 用中。贡献曲线 |
 | `komarev.com/ghpvc` | ✅ 用中。Profile views |
 | `img.shields.io` | ✅ 用中。徽章 |
+| ~~`github-readme-activity-graph.vercel.app`~~ | ⛔ **已弃用** —— 只画**最近 31 天的逐日**曲线，太琐碎。改成自建（见 §2.5） |
 | **`github-readme-stats.vercel.app`**（网上最常推荐的那个） | ❌ **`DEPLOYMENT_PAUSED`** |
 | **`github-profile-trophy.vercel.app`** | ❌ **`402 DEPLOYMENT_DISABLED`** |
+
+## 2.5 贡献图：自建，按月，滚动窗口 ★
+
+**没有任何现成卡片服务支持「按月聚合 + 滚动窗口」** —— 全都是最近 31 天的逐日图。
+所以自己画：`tools/contrib.py` 从 GitHub GraphQL 的 `contributionsCollection` 拉真实逐日数据，
+按月聚合，渲染成 `assets/contributions-{dark,light}.svg` **提交进仓库**。
+顺带把第三方依赖也干掉了（我们已经见过两个这类服务说死就死）。
+
+- **窗口是滚动的**：永远截止到**当前月**，往回数 `months` 个月。
+  `months` 在 `data/profile.json` 的 `cards.contributions` 里，默认 **12**。改成 24 即可变两年。
+- **GraphQL 单次查询最多跨 1 年** —— 所以 `fetch_daily()` **按年分块**。
+  `months=24` 已实测通过（710 天跨度 / 711 天数据 / 零报错）。不分块直接报错。
+- `.github/workflows/contributions.yml` 每天 04:17 UTC 重画，**只在数字真的变了才提交**。
+
+### 🔴 两个坑（都已避开，别改回去）
+
+1. **Action 必须以 `github-actions[bot]` 身份提交，不能用 `jackiectl`。**
+   GitHub 按 commit **author** 归属贡献 —— 用你的身份提交，这个 commit 本身就变成一次 contribution，
+   **把它要展示的那个数字给刷上去了**，而且每天 +1、永久自我膨胀。这是数据造假。
+   （这是本项目里唯一一处**故意不遵守**「每个 commit 双署名」的地方，理由在此。）
+2. **SVG 里不要写 "updated <日期>" 水印。** 日期每天都变 → 每天产生 diff → 逼出每日空提交
+   → 又回到坑 1。图只在**真实贡献数变化时**才更新。
+
+### 其他约束
+
+- SVG 里**不能有 `<style>` 或 `<script>`** —— GitHub 渲染 README 里的 SVG 时会把它们清洗掉。
+  一律用 inline `fill=` 属性。
+- `contrib.py` 要在**两个 Python 上都能跑**：本机 Great Lakes 是 **3.6**（没有
+  `datetime.fromisoformat`），Action 里的 ubuntu-latest 是 3.12。**别用 3.7+ 语法。**
+- 本机没有 SVG 光栅化工具（无 rsvg / inkscape；ImageMagick 没编 Freetype，**文字渲染不出来**）。
+  要肉眼看图：**`firefox --headless --screenshot`**（Gecko 渲染，最接近 GitHub 上的实际效果）。
 
 **`top-langs` 卡片故意没放** —— 现在三个仓库都是空的，渲染出来是张只有标题的空卡。
 等 `site-2d` / `site-3d` 推上去、有语言统计了再加（往 `profile.json` 的 `cards` 里加一条即可）。

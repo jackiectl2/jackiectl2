@@ -44,6 +44,18 @@ def themed_card(card, user):
     )
 
 
+def local_card(card, n):
+    """Same light/dark trick, but pointing at SVGs committed in this repo rather than a
+    third-party host — see tools/contrib.py for why."""
+    alt = card["alt"].replace("{n}", str(n))
+    return (
+        '<picture>\n'
+        '  <source media="(prefers-color-scheme: dark)" srcset="%s">\n'
+        '  <img alt="%s" src="%s">\n'
+        '</picture>' % (card["dark"], alt, card["light"])
+    )
+
+
 def build(d):
     ident, brand, cards = d["identity"], d["brand"], d["cards"]
     user = ident["github"]
@@ -80,7 +92,8 @@ def build(d):
     add(themed_card(cards["stats"], user))
     add(themed_card(cards["streak"], user))
     add("")
-    add(themed_card(cards["graph"], user))
+    contrib = cards["contributions"]
+    add(local_card(contrib, contrib["months"]))
     add("")
     add("</div>")
     add("")

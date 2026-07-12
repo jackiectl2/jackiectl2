@@ -27,8 +27,8 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 </picture>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-activity-graph.vercel.app/graph?username=jackiectl&hide_border=true&area=true&custom_title=Contribution%20Graph&theme=gruvbox">
-  <img alt="Contribution graph for jackiectl" src="https://github-readme-activity-graph.vercel.app/graph?username=jackiectl&hide_border=true&area=true&custom_title=Contribution%20Graph&theme=github-light">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">
+  <img alt="Contributions by month, last 12 months" src="assets/contributions-light.svg">
 </picture>
 
 </div>
@@ -116,6 +116,6 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 
 <div align="center">
 
-
+<sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub>
 
 </div>
