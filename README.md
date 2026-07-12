@@ -116,6 +116,6 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 
 <div align="center">
 
-<sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub>
+
 
 </div>
