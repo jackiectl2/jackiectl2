@@ -40,6 +40,28 @@ README.md           ← 生成物. 手改会被下次 build 覆盖
 
 **每次加新卡片前先 `curl` 验, 200 也要看 SVG 内容** —— 这些免费 Vercel 实例说停就停.
 
+### 🔴 "stats 卡片数字不对/不更新" 的两个原因 (2026-07-15 查实, 不是 bug)
+
+用户会觉得数字停住了或偏低. 都不是故障:
+
+1. **缓存, 双重.** `github-stats-extended` 自己 `cache-control: max-age=147600` (**41 小时**);
+   GitHub 再用 camo 图片代理**二次缓存**. 更狠的是: README 的 `<picture>` 给了 light/dark
+   两张图, camo **分别独立缓存** —— 实测同一时刻 profile 上一张 `stars=28` (新) 、
+   一张 `stars=0` (旧) . 所以刚 push 完看数字没变是正常的, ~1 天内自愈.
+   要立刻看真实值: 直接 `curl` 那个 stats URL (绕过 camo) .
+2. **卡片只能看到 PUBLIC 数据, 私有仓库的贡献一律看不到.** 这是最大的困惑源:
+   - 卡片 "Total Commits" ≈ 245 (公开) , 但你自己 profile 的贡献图是 **638**.
+   - 差距 = `restrictedContributionsCount` = **358** (私有仓库, 占 56%) .
+   - 原因: 卡片是 `github-stats-extended` 用**它自己的 token** 算的, 物理上看不到任何人的私有库;
+     你的贡献图算进私有是因为**你是本人在看自己的主页**.
+   - `count_private=true` 参数对托管实例**无效** (那个 token 不是你的) . 要让卡片算进私有,
+     只能**自建**: fork `github-stats-extended` → 部署到自己的 Vercel → 配自己的 PAT.
+     代价: 维护一个 Vercel 部署 + 一个会过期的 PAT, 且会把私有活动的**聚合计数公开**.
+     受众是招聘方/教授, 公开卡片展示公开工作本就得体 —— **默认不自建**, 除非用户明确要.
+
+`Contributed to (last year): 1` 也不是 bug: 这一项只数**你不拥有的**仓库 (外部贡献) ,
+你大多提交在自己的库里, 所以是 1. `Total Stars` 数的是所有 owned repo 的 stargazer 之和 (~23-28) .
+
 | 服务 | 状态 |
 |---|---|
 | `github-stats-extended.vercel.app` (MIT) | ✅ 用中. stats 卡片 |
