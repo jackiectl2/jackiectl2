@@ -62,6 +62,21 @@ README.md           ← 生成物. 手改会被下次 build 覆盖
 `Contributed to (last year): 1` 也不是 bug: 这一项只数**你不拥有的**仓库 (外部贡献) ,
 你大多提交在自己的库里, 所以是 1. `Total Stars` 数的是所有 owned repo 的 stargazer 之和 (~23-28) .
 
+### 🔴 "Profile views 徽章有时变破图" (2026-07-15 查实, 不是 bug, 不可修)
+
+komarev 是**计数器**, 响应头 `cache-control: no-cache, no-store` (每次访问都要重算) .
+GitHub camo 靠缓存供图, 但 `no-store` 让它**存不下** —— 于是每次页面加载都得实时代理 komarev,
+任何一瞬抖动就没有缓存兜底, 直接破图 (显示 alt 文字 "Profile views") . 它是 profile 上
+**唯一带 no-store 的元素**, 所以也是唯一会周期性破、然后自愈的. 大多数时候正常.
+
+- **不可修**: "实时计数" 要 no-store, "camo 稳定" 要可缓存, 两者物理互斥.
+- **不能像贡献图那样烤成每日静态 SVG**: 计数器靠**真实访客直接命中 komarev** 来 +1;
+  一旦缓存/烤成静态, 访客打的是缓存, komarev 不再被命中, 计数就冻住了. 对贡献图有效,
+  对计数器**行不通**.
+- **不存在更稳的服务**: 用户举的 `jhhuangchloe` / `Ian-wyy` 两个范例仓库用的是**同一个 komarev**,
+  它们一样会周期性破, 只是没在坏的那一刻被撞见. 实测三个 profile 同一时刻可以全 200.
+- **结论: 留着, 别删** (用户 2026-07-15 明确要保留) . 它和全网标准做法一致, 会自愈, 无需处理.
+
 | 服务 | 状态 |
 |---|---|
 | `github-stats-extended.vercel.app` (MIT) | ✅ 用中. stats 卡片 |
