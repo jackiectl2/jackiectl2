@@ -29,7 +29,11 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Generate stats card (dark)
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448  # v2
+        # Pinned to a commit, not the @v2 tag: this step receives STATS_PAT, which can read
+        # every private repo. A tag can be repointed by its maintainer, so pinning is what
+        # stops the code holding that token from changing without us noticing.
+        # To update: re-resolve the tag, read the diff, then bump this SHA.
         with:
           card: stats
           options: username=jackiectl&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000&theme=gruvbox
@@ -37,7 +41,7 @@ jobs:
           token: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Generate stats card (light)
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448  # v2
         with:
           card: stats
           options: username=jackiectl&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000&theme=gruvbox_light
