@@ -66,6 +66,14 @@
       "light": "assets/stats-light.svg",
       "height": "170",
       "alt": "GitHub stats for jackiectl"
+    },
+    "active_streak": "local",
+    "_active_streak": "'hosted' = streak-stats.demolab.com. 'local' = assets/streak-{dark,light}.svg from tools/streak.py. Local is the default: the hosted one returns an error card on upstream failures, and that error is a 200 SVG with max-age=86400, so camo serves the sad face for a full day. Numbers were verified identical before switching.",
+    "streak_local": {
+      "dark": "assets/streak-dark.svg",
+      "light": "assets/streak-light.svg",
+      "height": "170",
+      "alt": "Contribution streak for jackiectl"
     }
   },
   "timeline": [

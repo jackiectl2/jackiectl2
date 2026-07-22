@@ -61,6 +61,15 @@ jobs:
           path: assets/stats-light.svg
           token: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
 
+      # Fully ours — no upstream card service involved. Same token, so it also sees private.
+      - name: Generate streak card
+        env:
+          GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 tools/streak.py
+
+      - name: Rebuild README from the data
+        run: python3 build.py
+
       - name: Commit if the numbers moved
         run: |
           # Commit as the bot, NOT as jackiectl. GitHub credits contributions to the commit
@@ -68,7 +77,7 @@ jobs:
           # in its own right — inflating the very commit count the card reports.
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/stats-*.svg
+          git add assets/stats-*.svg assets/streak-*.svg README.md
           if git diff --cached --quiet; then
             echo "stats unchanged — nothing to commit"
             exit 0

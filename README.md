@@ -23,8 +23,8 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
   <img alt="GitHub stats for jackiectl" height="170" src="assets/stats-light.svg">
 </picture>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://streak-stats.demolab.com/?user=jackiectl&hide_border=true&background=00000000&theme=gruvbox">
-  <img alt="Contribution streak for jackiectl" height="170" src="https://streak-stats.demolab.com/?user=jackiectl&hide_border=true&background=00000000&theme=gruvbox_light">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/streak-dark.svg">
+  <img alt="Contribution streak for jackiectl" height="170" src="assets/streak-light.svg">
 </picture>
 
 <picture>

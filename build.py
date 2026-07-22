@@ -96,7 +96,10 @@ def build(d):
         add(local_card(cards["stats_local"], user))
     else:
         add(themed_card(cards["stats"], user))
-    add(themed_card(cards["streak"], user))
+    if cards.get("active_streak") == "local":
+        add(local_card(cards["streak_local"], user))
+    else:
+        add(themed_card(cards["streak"], user))
     add("")
     # cards.active_graph decides which contribution graph ships; the other stays configured.
     if cards.get("active_graph") == "monthly":
