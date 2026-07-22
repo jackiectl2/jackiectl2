@@ -28,6 +28,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Which token got used is otherwise invisible, and it is the difference between the
+      # card showing public-only numbers and real ones. Compared as a boolean expression so
+      # the value itself never reaches the shell.
+      - name: Report which token is in use
+        env:
+          HAS_PAT: ${{ secrets.STATS_PAT != '' }}
+        run: |
+          if [ "$HAS_PAT" = "true" ]; then
+            echo "STATS_PAT present -> private repositories are included"
+          else
+            echo "STATS_PAT absent -> falling back to GITHUB_TOKEN (public repositories only)"
+          fi
+
       - name: Generate stats card (dark)
         uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448  # v2
         # Pinned to a commit, not the @v2 tag: this step receives STATS_PAT, which can read
