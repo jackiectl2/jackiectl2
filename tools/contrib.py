@@ -168,19 +168,48 @@ def nice_axis(v):
 
 
 def smooth_path(pts):
-    """Cubic segments with a horizontal tangent at every data point.
+    """Monotone cubic (Fritsch-Carlson), the curve Chartist draws by default.
 
-    Same construction the borrowed chart used: each segment's control points sit a third of
-    the way across, level with the endpoint they belong to. Because both control points
-    share their endpoint's y, the curve can never overshoot past a data point — so a smooth
-    line still cannot dip below zero, which a plain Catmull-Rom spline would.
+    Ported from chartist's Interpolation.monotoneCubic, which is what the chart this
+    replaces was using — it renders through node-chartist with lineSmooth left at its
+    default, and that default is monotoneCubic.
+
+    The tangent at each point comes from its neighbours, so the curve flows through a run of
+    points instead of flattening at every one. Flat tangents were the earlier mistake: they
+    forced an S-bend into every single segment, so the line kept switching between concave
+    and convex. Tangents are set to 0 only where the data actually turns (a local extreme,
+    or a flat neighbour), which is what keeps the curve monotone between points — no
+    invented bumps, and never a dip below zero.
     """
-    d = ["M %.2f %.2f" % pts[0]]
-    for i in range(1, len(pts)):
-        x0, y0 = pts[i - 1]
-        x1, y1 = pts[i]
-        k = (x1 - x0) / 3.0
-        d.append("C %.2f %.2f %.2f %.2f %.2f %.2f" % (x0 + k, y0, x1 - k, y1, x1, y1))
+    n = len(pts)
+    if n < 3:
+        return " ".join(["M %.2f %.2f" % pts[0]] +
+                        ["L %.2f %.2f" % q for q in pts[1:]])
+    xs = [q[0] for q in pts]
+    ys = [q[1] for q in pts]
+    dxs, dys, ds = [], [], []
+    for i in range(n - 1):
+        dxs.append(xs[i + 1] - xs[i])
+        dys.append(ys[i + 1] - ys[i])
+        ds.append(dys[i] / dxs[i] if dxs[i] else 0.0)
+
+    ms = [0.0] * n
+    ms[0] = ds[0]
+    ms[n - 1] = ds[n - 2]
+    for i in range(1, n - 1):
+        if ds[i] == 0 or ds[i - 1] == 0 or (ds[i - 1] > 0) != (ds[i] > 0):
+            ms[i] = 0.0
+        else:
+            denom = ((2 * dxs[i] + dxs[i - 1]) / ds[i - 1] +
+                     (dxs[i] + 2 * dxs[i - 1]) / ds[i])
+            ms[i] = 3 * (dxs[i - 1] + dxs[i]) / denom if denom else 0.0
+
+    d = ["M %.2f %.2f" % (xs[0], ys[0])]
+    for i in range(n - 1):
+        d.append("C %.2f %.2f %.2f %.2f %.2f %.2f" % (
+            xs[i] + dxs[i] / 3.0, ys[i] + ms[i] * dxs[i] / 3.0,
+            xs[i + 1] - dxs[i] / 3.0, ys[i + 1] - ms[i + 1] * dxs[i] / 3.0,
+            xs[i + 1], ys[i + 1]))
     return " ".join(d)
 
 
