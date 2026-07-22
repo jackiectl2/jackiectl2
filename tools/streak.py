@@ -93,18 +93,28 @@ def render(theme, total, cur, cur_rng, longest, long_rng, since):
     # Ring outer edge sits at 75+33+2.5 = 110.5; the label cap-height starts near 121. Keep
     # that gap — at r=37 the ring cut straight through the word "Streak".
     def panel(cx, big, label, sub, ring=False):
+        size = 30
         if ring:
             s.append('<circle cx="%.1f" cy="75" r="33" fill="none" stroke="%s" stroke-width="5"/>'
                      % (cx, c["bar"]))
-        s.append('<text x="%.1f" y="86" text-anchor="middle" font-family="%s" font-size="30" '
-                 'font-weight="700" fill="%s">%s</text>' % (cx, fam, c["bar"], big))
+            # The ring can't grow to fit a longer number — at r=37 it cut through the label
+            # below — so the number shrinks instead. Total contributions only climbs, and
+            # "1,234" at size 30 is wider than the ring's inner width.
+            inner = 2 * (33 - 2.5) - 6
+            width = sum(0.30 if ch == "," else 0.60 for ch in big) * size
+            if width > inner:
+                size = int(size * inner / width)
+        s.append('<text x="%.1f" y="86" text-anchor="middle" font-family="%s" font-size="%d" '
+                 'font-weight="700" fill="%s">%s</text>' % (cx, fam, size, c["bar"], big))
         s.append('<text x="%.1f" y="131" text-anchor="middle" font-family="%s" font-size="14" '
                  'font-weight="600" fill="%s">%s</text>' % (cx, fam, c["title"], label))
         s.append('<text x="%.1f" y="152" text-anchor="middle" font-family="%s" font-size="12" '
                  'fill="%s">%s</text>' % (cx, fam, c["muted"], sub))
 
-    panel(col * 0.5, "{:,}".format(total), "Total Contributions", since)
-    panel(col * 1.5, str(cur), "Current Streak", cur_rng, ring=True)
+    # The ring marks total contributions, not the current streak. A streak resets to 1 or 0
+    # on any day off, so circling it emphasises the one number that is mostly noise.
+    panel(col * 0.5, "{:,}".format(total), "Total Contributions", since, ring=True)
+    panel(col * 1.5, str(cur), "Current Streak", cur_rng)
     panel(col * 2.5, str(longest), "Longest Streak", long_rng)
     s.append("</svg>")
     return "\n".join(s) + "\n"
