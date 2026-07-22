@@ -1,10 +1,11 @@
 name: Refresh profile cards
 
-# Self-hosted alternative to calling github-stats-extended.vercel.app at render time.
-# The card is generated here and committed as a static SVG, which buys three things:
+# All three cards are drawn by our own scripts in tools/ and committed as static SVGs.
+# Nothing here calls a card service at render time, which buys four things:
 #   - no third-party service holding a token that can read private repos
-#   - no camo cache staleness (assets/ is served through /raw/, same as the contribution graph)
-#   - the card keeps working if the public instance goes down, like two others already have
+#   - no camo cache staleness (assets/ is served through /raw/)
+#   - the cards keep working when a public instance dies, as two of them already did
+#   - the labels are ours, so a row cannot say "(last year)" over an all-time number
 #
 # Token: uses STATS_PAT if that secret exists, otherwise the built-in GITHUB_TOKEN.
 #   - GITHUB_TOKEN  -> public repositories only (no setup, no risk)
@@ -43,33 +44,18 @@ jobs:
             echo "STATS_PAT absent -> falling back to GITHUB_TOKEN (public repositories only)"
           fi
 
-      - name: Generate stats card (dark)
-        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448  # v2
-        # Pinned to a commit, not the @v2 tag: this step receives STATS_PAT, which can read
-        # every private repo. A tag can be repointed by its maintainer, so pinning is what
-        # stops the code holding that token from changing without us noticing.
-        # To update: re-resolve the tag, read the diff, then bump this SHA.
-        with:
-          card: stats
-          options: username=jackiectl&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000&theme=gruvbox
-          path: assets/stats-dark.svg
-          token: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+      # Ours now. The upstream action's row labels are fixed, and one of them prints
+      # "(last year)" over a number that has no time window — see tools/stats.py.
+      - name: Generate stats card
+        env:
+          GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 tools/stats.py
 
-      - name: Generate stats card (light)
-        uses: stats-organization/github-readme-stats-action@f9d8133845f40d659a754f78b8484983ba766448  # v2
-        with:
-          card: stats
-          options: username=jackiectl&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000&theme=gruvbox_light
-          path: assets/stats-light.svg
-          token: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
-
-      # Fully ours — no upstream card service involved. Same token, so it also sees private.
       - name: Generate streak card
         env:
           GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
         run: python3 tools/streak.py
 
-      # Third and last card that used to come from someone else's server.
       - name: Generate contribution graph
         env:
           GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
