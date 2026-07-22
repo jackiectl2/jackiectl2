@@ -167,14 +167,35 @@ def nice_axis(v):
     return int(max(v, 1)), max(1, int(max(v, 1) // 5))
 
 
+def smooth_path(pts):
+    """Cubic segments with a horizontal tangent at every data point.
+
+    Same construction the borrowed chart used: each segment's control points sit a third of
+    the way across, level with the endpoint they belong to. Because both control points
+    share their endpoint's y, the curve can never overshoot past a data point — so a smooth
+    line still cannot dip below zero, which a plain Catmull-Rom spline would.
+    """
+    d = ["M %.2f %.2f" % pts[0]]
+    for i in range(1, len(pts)):
+        x0, y0 = pts[i - 1]
+        x1, y1 = pts[i]
+        k = (x1 - x0) / 3.0
+        d.append("C %.2f %.2f %.2f %.2f %.2f %.2f" % (x0 + k, y0, x1 - k, y1, x1, y1))
+    return " ".join(d)
+
+
 def render_daily(dates, counts, theme, total):
     """Daily area chart: the shape the third-party card drew, with our data and palette.
 
     Inline fills only — no <style>, no <script>.
     """
     c = THEMES[theme]
-    W, H = 860, 260
+    # Plot height is set from the width, not picked by eye: the borrowed chart ran a
+    # data area of roughly 0.25 height-to-width, and that ratio is what made its peaks read
+    # as peaks. Flatten it and the same curve looks like rolling hills.
+    W = 860
     pad_l, pad_r, pad_t, pad_b = 52, 20, 52, 52
+    H = int(round((W - pad_l - pad_r) * 0.25)) + pad_t + pad_b
     plot_w, plot_h = W - pad_l - pad_r, H - pad_t - pad_b
     n = len(dates)
     top, step = nice_axis(max(counts) if counts else 1)
@@ -206,16 +227,13 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # area under the curve, then the line on top
-    area = ["M %.1f %.1f" % (X(0), base)]
-    line = []
-    for i, v in enumerate(counts):
-        area.append("L %.1f %.1f" % (X(i), Y(v)))
-        line.append("%s %.1f %.1f" % ("M" if i == 0 else "L", X(i), Y(v)))
-    area.append("L %.1f %.1f Z" % (X(n - 1), base))
-    s.append('<path d="%s" fill="%s" opacity="0.18"/>' % (" ".join(area), c["bar"]))
+    # area under the curve, then the same curve as a line on top
+    pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
+    curve = smooth_path(pts)
+    s.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
+             % (curve, X(n - 1), base, X(0), base, c["bar"]))
     s.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
-             'stroke-linecap="round"/>' % (" ".join(line), c["bar"]))
+             'stroke-linecap="round"/>' % (curve, c["bar"]))
 
     # a dot per day, and the day-of-month underneath
     step = 1 if n <= 32 else max(1, n // 24)
