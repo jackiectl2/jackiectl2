@@ -28,8 +28,8 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 </picture>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-activity-graph.vercel.app/graph?username=jackiectl&hide_border=true&area=true&custom_title=Contribution%20Graph&theme=gruvbox">
-  <img alt="Contribution graph for jackiectl" src="https://github-readme-activity-graph.vercel.app/graph?username=jackiectl&hide_border=true&area=true&custom_title=Contribution%20Graph&theme=github-light">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">
+  <img alt="Contributions per day for jackiectl, last 31 days" src="assets/contributions-light.svg">
 </picture>
 
 </div>

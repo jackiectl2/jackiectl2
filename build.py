@@ -102,9 +102,11 @@ def build(d):
         add(themed_card(cards["streak"], user))
     add("")
     # cards.active_graph decides which contribution graph ships; the other stays configured.
-    if cards.get("active_graph") == "monthly":
+    graph_mode = cards.get("active_graph", "local_daily")
+    if graph_mode.startswith("local"):
         contrib = cards["contributions"]
-        add(local_card(contrib, contrib["months"]))
+        span = contrib["months"] if graph_mode == "local_monthly" else contrib["days"]
+        add(local_card(contrib, span))
     else:
         add(themed_card(cards["graph"], user))
     add("")
