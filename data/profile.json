@@ -1,307 +1,315 @@
 {
-    "_note": "Machine-readable projection of ../../PROFILE.md (the single source of truth). Edit PROFILE.md first, then mirror the change here and run `python3 build.py`. README.md is GENERATED — never hand-edit it. Adding a project = adding one entry below, with no code change (CLAUDE.md 铁律 B).",
-    "identity": {
-        "display": "Tianlang (Jackie) Chen",
-        "name_zh": "陈天朗",
-        "github": "jackiectl",
-        "email": "ctlang@umich.edu",
-        "role": "B.S.E. Candidate, Data Science",
-        "affiliation": "University of Michigan, Ann Arbor"
+  "_note": "Machine-readable projection of ../../PROFILE.md (the single source of truth). Edit PROFILE.md first, then mirror the change here and run `python3 build.py`. README.md is GENERATED — never hand-edit it. Adding a project = adding one entry below, with no code change (CLAUDE.md 铁律 B).",
+  "identity": {
+    "display": "Tianlang (Jackie) Chen",
+    "name_zh": "陈天朗",
+    "github": "jackiectl",
+    "email": "ctlang@umich.edu",
+    "role": "B.S.E. Candidate, Data Science",
+    "affiliation": "University of Michigan, Ann Arbor"
+  },
+  "brand": {
+    "name": "Dim Sum Parlor",
+    "lab": "DIM SUM PARLOR · 點心",
+    "meme": "x.sum(dim=-1)",
+    "gloss": "dim = dimension, sum = reduce. Dim Sum = 點心 = summing along a dimension.",
+    "_show_in_readme": "Owner removed the meme line and the brand footer from the README on 2026-07-11 (commit 2adbf81). The facts stay here because the 3D site still needs them — this flag only governs the README.",
+    "show_in_readme": false
+  },
+  "bio": "B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across LLM-guided incentive design, genomic foundation models, and AI-guided environmental sensing. Previously Mechanical Engineering at Shanghai Jiao Tong University.",
+  "bio_long": [
+    "I study Data Science at the University of Michigan, Ann Arbor. I came here through the UM-SJTU dual-degree program: the first half of my undergraduate degree was Mechanical Engineering at Shanghai Jiao Tong University's Joint Institute, the second half is Data Science at Michigan. It was less a change of heart than a change of tools.",
+    "My projects look scattered at first glance — a genomic foundation model, incentive design for shared mobility, sensor placement in the Great Lakes, analytics tooling for materials scientists, representation learning for microbial communities. I think of them as three questions I keep circling: AI for science, AI for decision-making, and what data-driven methods are actually worth once they leave the benchmark.",
+    "I am currently applying to graduate and PhD programs.",
+    "I am from Guangzhou, which mostly means I have opinions about dim sum. I cannot make it yet — I am learning."
+  ],
+  "cards": {
+    "_note": "Verified live 2026-07-11. github-readme-stats.vercel.app and github-profile-trophy are BOTH DEAD (DEPLOYMENT_PAUSED / 402) — do not use them. Re-verify before adding any new card.",
+    "stats": {
+      "base": "https://github-stats-extended.vercel.app/api",
+      "query": "username={u}&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000",
+      "theme_dark": "gruvbox",
+      "theme_light": "gruvbox_light",
+      "height": "170",
+      "alt": "GitHub stats for {u}"
     },
-    "brand": {
-        "name": "Dim Sum Parlor",
-        "lab": "DIM SUM PARLOR · 點心",
-        "meme": "x.sum(dim=-1)",
-        "gloss": "dim = dimension, sum = reduce. Dim Sum = 點心 = summing along a dimension.",
-        "_show_in_readme": "Owner removed the meme line and the brand footer from the README on 2026-07-11 (commit 2adbf81). The facts stay here because the 3D site still needs them — this flag only governs the README.",
-        "show_in_readme": false
+    "streak": {
+      "base": "https://streak-stats.demolab.com/",
+      "query": "user={u}&hide_border=true&background=00000000",
+      "theme_dark": "gruvbox",
+      "theme_light": "gruvbox_light",
+      "height": "170",
+      "alt": "Contribution streak for {u}"
     },
-    "bio": "B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across LLM-guided incentive design, genomic foundation models, and AI-guided environmental sensing. Previously Mechanical Engineering at Shanghai Jiao Tong University.",
-    "bio_long": [
-        "I study Data Science at the University of Michigan, Ann Arbor. I came here through the UM-SJTU dual-degree program: the first half of my undergraduate degree was Mechanical Engineering at Shanghai Jiao Tong University's Joint Institute, the second half is Data Science at Michigan. It was less a change of heart than a change of tools.",
-        "My projects look scattered at first glance — a genomic foundation model, incentive design for shared mobility, sensor placement in the Great Lakes, analytics tooling for materials scientists, representation learning for microbial communities. I think of them as three questions I keep circling: AI for science, AI for decision-making, and what data-driven methods are actually worth once they leave the benchmark.",
-        "I am currently applying to graduate and PhD programs.",
-        "I am from Guangzhou, which mostly means I have opinions about dim sum. I cannot make it yet — I am learning."
-    ],
-    "cards": {
-        "_note": "Verified live 2026-07-11. github-readme-stats.vercel.app and github-profile-trophy are BOTH DEAD (DEPLOYMENT_PAUSED / 402) — do not use them. Re-verify before adding any new card.",
-        "stats": {
-            "base": "https://github-stats-extended.vercel.app/api",
-            "query": "username={u}&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000",
-            "theme_dark": "gruvbox",
-            "theme_light": "gruvbox_light",
-            "height": "170",
-            "alt": "GitHub stats for {u}"
-        },
-        "streak": {
-            "base": "https://streak-stats.demolab.com/",
-            "query": "user={u}&hide_border=true&background=00000000",
-            "theme_dark": "gruvbox",
-            "theme_light": "gruvbox_light",
-            "height": "170",
-            "alt": "Contribution streak for {u}"
-        },
-        "views": "https://komarev.com/ghpvc/?username={u}&label=Profile%20Views&color=d97706&style=flat",
-        "followers": "https://img.shields.io/github/followers/{u}?style=flat&color=d97706&labelColor=3c3836&logo=github",
-        "contributions": {
-            "_note": "PARKED — see cards.active_graph. Self-generated by tools/contrib.py from GitHub's GraphQL contributionsCollection; rolling window always ending at the current month; `months` sets its length. Nothing here is dead: flip active_graph to 'monthly' and both the README and the refresh workflow pick it back up.",
-            "months": 12,
-            "dark": "assets/contributions-dark.svg",
-            "light": "assets/contributions-light.svg",
-            "alt": "Contributions by month, last {n} months"
-        },
-        "active_graph": "daily",
-        "_active_graph": "'daily' = the third-party card (last ~31 days, one bar per day). 'monthly' = the self-generated rolling window in assets/ (tools/contrib.py). Parked on 'daily' 2026-07-11: the account only has ~3 months of history, so a 12-month view was 9 empty bars. Flip to 'monthly' once there's a year of history — the workflow reads this same switch and resumes on its own.",
-        "graph": {
-            "base": "https://github-readme-activity-graph.vercel.app/graph",
-            "query": "username={u}&hide_border=true&area=true&custom_title=Contribution%20Graph",
-            "theme_dark": "gruvbox",
-            "theme_light": "github-light",
-            "alt": "Contribution graph for {u}"
-        }
+    "views": "https://komarev.com/ghpvc/?username={u}&label=Profile%20Views&color=d97706&style=flat",
+    "followers": "https://img.shields.io/github/followers/{u}?style=flat&color=d97706&labelColor=3c3836&logo=github",
+    "contributions": {
+      "_note": "PARKED — see cards.active_graph. Self-generated by tools/contrib.py from GitHub's GraphQL contributionsCollection; rolling window always ending at the current month; `months` sets its length. Nothing here is dead: flip active_graph to 'monthly' and both the README and the refresh workflow pick it back up.",
+      "months": 12,
+      "dark": "assets/contributions-dark.svg",
+      "light": "assets/contributions-light.svg",
+      "alt": "Contributions by month, last {n} months"
     },
-    "timeline": [
-        {
-            "when": "2026 — present",
-            "what": "Research, University of Michigan",
-            "detail": "LLM incentive design, genomic foundation models, environmental sensing, materials-science tooling, microbial representation learning."
-        },
-        {
-            "when": "2025 — present",
-            "what": "B.S.E. Data Science, University of Michigan, Ann Arbor",
-            "detail": "Machine Learning · Computer Graphics & Generative Models · Computational Linguistics · Algorithms & Data Structures · Probability & Statistics."
-        },
-        {
-            "when": "2025.05",
-            "what": "Teaching Assistant, General Physics",
-            "detail": ""
-        },
-        {
-            "when": "2025.03",
-            "what": "Teaching Assistant, English Academic Writing",
-            "detail": ""
-        },
-        {
-            "when": "2025.01",
-            "what": "MCM/ICM — Honorable Mention",
-            "detail": "COMAP Mathematical Contest in Modeling."
-        },
-        {
-            "when": "2024 — 2025",
-            "what": "Mars Asia — Global IT Service Center",
-            "detail": "WeCom full-stack development (JavaScript, Node.js, Vue.js): API and interface work, data migration, cross-platform retrieval, and automation that kept operations continuous through a system migration."
-        },
-        {
-            "when": "2023 — 2025.05",
-            "what": "Mechanical Engineering, Shanghai Jiao Tong University",
-            "detail": "Applied Linear Algebra · Dynamical Systems · Design & Manufacturing · Dynamics & Vibrations."
-        }
-    ],
-    "research": [
-        {
-            "id": "R1",
-            "title": "LLM for Incentive Design in Mobility Systems",
-            "hook": "Can an LLM design the incentives that make shared mobility actually work?",
-            "detail": "An LLM-guided workflow that generates and evaluates interpretable incentive policies for ride-hailing, transit, and shared vehicles — pairing learning-based methods with classical optimization."
-        },
-        {
-            "id": "R2",
-            "title": "EPCOT Foundation Model — TSS-to-Expression Data Pipeline",
-            "hook": "Made a genomic foundation model 2–5× faster to train — and found a 50 kb bug that was quietly wrecking its interpretability.",
-            "detail": "Pseudobulk pipeline from raw snMultiome (1 bp sparse ATAC → 600 kb HDF5 windows; CP10K-normalized 19,264-gene RNA vectors across 7 cell types). Five bit-equivalent training optimizations for a 2–5× speedup at identical numerics. Reset-head fine-tuning for small-data generalization. Located and fixed a ~50 kb TSS-bin offset."
-        },
-        {
-            "id": "R3",
-            "title": "AI-Guided Environmental Sensing & Adaptive Monitoring",
-            "hook": "Where should you put the next sensor in Lake Michigan? Let uncertainty decide.",
-            "detail": "Reproducible ingestion → reconstruction → uncertainty-quantification workflow for the sparse, seasonal Great Lakes, comparing random / grid / uncertainty-aware sensor-placement rules."
-        },
-        {
-            "id": "R4",
-            "title": "Applets for Data Analytics in Materials Science",
-            "hook": "Turning materials-science analysis into something you can just... upload a CSV to.",
-            "detail": "JavaScript front end + Python back end serving the materials community: users upload datasets and analyze them with SOTA models and fitting methods, built as reusable FAIR-compliant modules."
-        },
-        {
-            "id": "R5",
-            "title": "Functional Genomic Representation Learning for Microbial Communities",
-            "hook": "A parameter-free way to turn a whole microbial community into one honest vector.",
-            "detail": "Proteogenic k-mer tokenization yields interpretable, parameter-free genome encodings that plug into both classical statistics and pretrained sequence models (Evo, ESM, ProtT5). Abundance-weighted community embeddings, leakage-safe features, permutation tests and honest cross-validation."
-        }
-    ],
-    "experience": [
-        {
-            "id": "E1",
-            "role": "Full-Stack Developer, Internship",
-            "org": "Mars Asia — Global IT Service Center",
-            "when": "2024 — 2025",
-            "hook": "Kept a global company talking to itself through a platform migration.",
-            "detail": "Full-stack development on WeCom (企业微信) in JavaScript, Node.js and Vue.js, supporting the internal communication and workflow tools the company runs on: API implementation, interface development, data migration, and information retrieval across internal service platforms. Built automated workflows that held operational continuity during the system migration."
-        }
-    ],
-    "publications": [],
-    "coursework": [
-        {
-            "school": "University of Michigan, Ann Arbor",
-            "when": "2025 — present",
-            "items": [
-                "Machine Learning",
-                "Computer Graphics & Generative Models",
-                "Computational Linguistics",
-                "Algorithms & Data Structures",
-                "Probability & Statistics",
-                "Statistics & Data Analysis",
-                "PAT 200 — Introduction to Electronic Music Production"
-            ]
-        },
-        {
-            "school": "Shanghai Jiao Tong University — UM-SJTU Joint Institute",
-            "when": "2023 — 2025",
-            "items": [
-                "Applied Linear Algebra",
-                "Dynamical Systems",
-                "Design & Manufacturing",
-                "Dynamics & Vibrations"
-            ]
-        }
-    ],
-    "music": {
-        "course": "PAT 200 — Introduction to Electronic Music Production",
-        "org": "Performing Arts Technology, School of Music, Theatre & Dance, University of Michigan",
-        "note": "Electronic music production. The beat looping under this room right now is the first one below — same track, pulled down to background level.",
-        "tracks": [
-            {
-                "title": "PUSH — Beat Making",
-                "file": "push-beat-making-loop.mp3",
-                "note": "Made on an Ableton Push. Thirty-two bars, which is why it loops cleanly — this is what you are hearing in the parlor, at full level."
-            },
-            {
-                "title": "PUSH — Beat Making (assignment cut)",
-                "file": "push-beat-making.mp3",
-                "note": "The longer version handed in for the course."
-            },
-            {
-                "title": "Composition 1, Part 2",
-                "file": "composition-1-part-2.mp3",
-                "note": "Built from objects rather than instruments — steel chopsticks, running water, a doorknob, a passport hitting a table. Recorded, reversed, and played back as a kit. Fitting, for a dim sum parlor."
-            }
-        ]
+    "active_graph": "daily",
+    "_active_graph": "'daily' = the third-party card (last ~31 days, one bar per day). 'monthly' = the self-generated rolling window in assets/ (tools/contrib.py). Parked on 'daily' 2026-07-11: the account only has ~3 months of history, so a 12-month view was 9 empty bars. Flip to 'monthly' once there's a year of history — the workflow reads this same switch and resumes on its own.",
+    "graph": {
+      "base": "https://github-readme-activity-graph.vercel.app/graph",
+      "query": "username={u}&hide_border=true&area=true&custom_title=Contribution%20Graph",
+      "theme_dark": "gruvbox",
+      "theme_light": "github-light",
+      "alt": "Contribution graph for {u}"
     },
-    "sports": {
-        "note": "",
-        "items": []
-    },
-    "skills": [
-        {
-            "group": "Languages",
-            "items": [
-                "Python",
-                "C",
-                "C++",
-                "JavaScript",
-                "SQL",
-                "R",
-                "MATLAB",
-                "Java",
-                "Bash"
-            ]
-        },
-        {
-            "group": "LLM & Agentic AI",
-            "items": [
-                "Prompt Engineering",
-                "Structured Prompting",
-                "RAG",
-                "LLM Workflow Design",
-                "Agent-Guided Code Generation",
-                "Output Validation",
-                "Hallucination Mitigation"
-            ]
-        },
-        {
-            "group": "ML & Data",
-            "items": [
-                "PyTorch",
-                "scikit-learn",
-                "Gaussian Processes",
-                "Foundation-Model Fine-Tuning"
-            ]
-        },
-        {
-            "group": "Web",
-            "items": [
-                "Node.js",
-                "Vue.js",
-                "HTML",
-                "CSS"
-            ]
-        },
-        {
-            "group": "Data Stores",
-            "items": [
-                "MySQL",
-                "SQLite",
-                "HDF5"
-            ]
-        },
-        {
-            "group": "Tools",
-            "items": [
-                "Git",
-                "Slurm / HPC",
-                "Blender",
-                "SolidWorks"
-            ]
-        },
-        {
-            "group": "Spoken",
-            "items": [
-                "English",
-                "Mandarin",
-                "Cantonese"
-            ]
-        }
-    ],
-    "links": [
-        {
-            "label": "Website",
-            "url": "https://jackiectl.github.io",
-            "badge": "Website-jackiectl.github.io-b2382c?style=flat&logo=jekyll&logoColor=white",
-            "icon": "globe",
-            "live": true
-        },
-        {
-            "label": "LinkedIn",
-            "url": "https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/",
-            "badge": "LinkedIn-Tianlang%20(Jackie)%20Chen-0A66C2?style=flat&logo=linkedin&logoColor=white",
-            "live": true,
-            "icon": "linkedin"
-        },
-        {
-            "label": "Email",
-            "url": "mailto:ctlang@umich.edu",
-            "badge": "Email-ctlang%40umich.edu-D14836?style=flat&logo=maildotru&logoColor=white",
-            "live": true,
-            "icon": "envelope-o"
-        }
-    ],
-    "coming_soon": [
-        {
-            "label": "jackiectl.com",
-            "what": "Dim Sum Parlor — a 3D teahouse you can walk through"
-        },
-        {
-            "label": "Google Scholar",
-            "what": ""
-        }
-    ],
-    "labels": {
-        "timeline_more": "To be continued · 敬請期待",
-        "research_more": "More steamers on the next cart · 敬請期待",
-        "publications_none": "In preparation.",
-        "experience_more": "Next role, next cart · 敬請期待",
-        "coursework_more": "More on the menu each term · 敬請期待",
-        "music_none": "Recordings not uploaded yet · 敬請期待",
-        "sports_none": "To be filled in · 敬請期待"
+    "active_stats": "local",
+    "_active_stats": "'hosted' = github-stats-extended.vercel.app at render time (public data only, 41h cache, third-party). 'local' = assets/stats-{dark,light}.svg generated by .github/workflows/stats-cards.yml and committed here. Local is the default: no third party sees a token, and adding a STATS_PAT secret upgrades it to include private repos with no code change.",
+    "stats_local": {
+      "dark": "assets/stats-dark.svg",
+      "light": "assets/stats-light.svg",
+      "height": "170",
+      "alt": "GitHub stats for jackiectl"
     }
+  },
+  "timeline": [
+    {
+      "when": "2026 — present",
+      "what": "Research, University of Michigan",
+      "detail": "LLM incentive design, genomic foundation models, environmental sensing, materials-science tooling, microbial representation learning."
+    },
+    {
+      "when": "2025 — present",
+      "what": "B.S.E. Data Science, University of Michigan, Ann Arbor",
+      "detail": "Machine Learning · Computer Graphics & Generative Models · Computational Linguistics · Algorithms & Data Structures · Probability & Statistics."
+    },
+    {
+      "when": "2025.05",
+      "what": "Teaching Assistant, General Physics",
+      "detail": ""
+    },
+    {
+      "when": "2025.03",
+      "what": "Teaching Assistant, English Academic Writing",
+      "detail": ""
+    },
+    {
+      "when": "2025.01",
+      "what": "MCM/ICM — Honorable Mention",
+      "detail": "COMAP Mathematical Contest in Modeling."
+    },
+    {
+      "when": "2024 — 2025",
+      "what": "Mars Asia — Global IT Service Center",
+      "detail": "WeCom full-stack development (JavaScript, Node.js, Vue.js): API and interface work, data migration, cross-platform retrieval, and automation that kept operations continuous through a system migration."
+    },
+    {
+      "when": "2023 — 2025.05",
+      "what": "Mechanical Engineering, Shanghai Jiao Tong University",
+      "detail": "Applied Linear Algebra · Dynamical Systems · Design & Manufacturing · Dynamics & Vibrations."
+    }
+  ],
+  "research": [
+    {
+      "id": "R1",
+      "title": "LLM for Incentive Design in Mobility Systems",
+      "hook": "Can an LLM design the incentives that make shared mobility actually work?",
+      "detail": "An LLM-guided workflow that generates and evaluates interpretable incentive policies for ride-hailing, transit, and shared vehicles — pairing learning-based methods with classical optimization."
+    },
+    {
+      "id": "R2",
+      "title": "EPCOT Foundation Model — TSS-to-Expression Data Pipeline",
+      "hook": "Made a genomic foundation model 2–5× faster to train — and found a 50 kb bug that was quietly wrecking its interpretability.",
+      "detail": "Pseudobulk pipeline from raw snMultiome (1 bp sparse ATAC → 600 kb HDF5 windows; CP10K-normalized 19,264-gene RNA vectors across 7 cell types). Five bit-equivalent training optimizations for a 2–5× speedup at identical numerics. Reset-head fine-tuning for small-data generalization. Located and fixed a ~50 kb TSS-bin offset."
+    },
+    {
+      "id": "R3",
+      "title": "AI-Guided Environmental Sensing & Adaptive Monitoring",
+      "hook": "Where should you put the next sensor in Lake Michigan? Let uncertainty decide.",
+      "detail": "Reproducible ingestion → reconstruction → uncertainty-quantification workflow for the sparse, seasonal Great Lakes, comparing random / grid / uncertainty-aware sensor-placement rules."
+    },
+    {
+      "id": "R4",
+      "title": "Applets for Data Analytics in Materials Science",
+      "hook": "Turning materials-science analysis into something you can just... upload a CSV to.",
+      "detail": "JavaScript front end + Python back end serving the materials community: users upload datasets and analyze them with SOTA models and fitting methods, built as reusable FAIR-compliant modules."
+    },
+    {
+      "id": "R5",
+      "title": "Functional Genomic Representation Learning for Microbial Communities",
+      "hook": "A parameter-free way to turn a whole microbial community into one honest vector.",
+      "detail": "Proteogenic k-mer tokenization yields interpretable, parameter-free genome encodings that plug into both classical statistics and pretrained sequence models (Evo, ESM, ProtT5). Abundance-weighted community embeddings, leakage-safe features, permutation tests and honest cross-validation."
+    }
+  ],
+  "experience": [
+    {
+      "id": "E1",
+      "role": "Full-Stack Developer, Internship",
+      "org": "Mars Asia — Global IT Service Center",
+      "when": "2024 — 2025",
+      "hook": "Kept a global company talking to itself through a platform migration.",
+      "detail": "Full-stack development on WeCom (企业微信) in JavaScript, Node.js and Vue.js, supporting the internal communication and workflow tools the company runs on: API implementation, interface development, data migration, and information retrieval across internal service platforms. Built automated workflows that held operational continuity during the system migration."
+    }
+  ],
+  "publications": [],
+  "coursework": [
+    {
+      "school": "University of Michigan, Ann Arbor",
+      "when": "2025 — present",
+      "items": [
+        "Machine Learning",
+        "Computer Graphics & Generative Models",
+        "Computational Linguistics",
+        "Algorithms & Data Structures",
+        "Probability & Statistics",
+        "Statistics & Data Analysis",
+        "PAT 200 — Introduction to Electronic Music Production"
+      ]
+    },
+    {
+      "school": "Shanghai Jiao Tong University — UM-SJTU Joint Institute",
+      "when": "2023 — 2025",
+      "items": [
+        "Applied Linear Algebra",
+        "Dynamical Systems",
+        "Design & Manufacturing",
+        "Dynamics & Vibrations"
+      ]
+    }
+  ],
+  "music": {
+    "course": "PAT 200 — Introduction to Electronic Music Production",
+    "org": "Performing Arts Technology, School of Music, Theatre & Dance, University of Michigan",
+    "note": "Electronic music production. The beat looping under this room right now is the first one below — same track, pulled down to background level.",
+    "tracks": [
+      {
+        "title": "PUSH — Beat Making",
+        "file": "push-beat-making-loop.mp3",
+        "note": "Made on an Ableton Push. Thirty-two bars, which is why it loops cleanly — this is what you are hearing in the parlor, at full level."
+      },
+      {
+        "title": "PUSH — Beat Making (assignment cut)",
+        "file": "push-beat-making.mp3",
+        "note": "The longer version handed in for the course."
+      },
+      {
+        "title": "Composition 1, Part 2",
+        "file": "composition-1-part-2.mp3",
+        "note": "Built from objects rather than instruments — steel chopsticks, running water, a doorknob, a passport hitting a table. Recorded, reversed, and played back as a kit. Fitting, for a dim sum parlor."
+      }
+    ]
+  },
+  "sports": {
+    "note": "",
+    "items": []
+  },
+  "skills": [
+    {
+      "group": "Languages",
+      "items": [
+        "Python",
+        "C",
+        "C++",
+        "JavaScript",
+        "SQL",
+        "R",
+        "MATLAB",
+        "Java",
+        "Bash"
+      ]
+    },
+    {
+      "group": "LLM & Agentic AI",
+      "items": [
+        "Prompt Engineering",
+        "Structured Prompting",
+        "RAG",
+        "LLM Workflow Design",
+        "Agent-Guided Code Generation",
+        "Output Validation",
+        "Hallucination Mitigation"
+      ]
+    },
+    {
+      "group": "ML & Data",
+      "items": [
+        "PyTorch",
+        "scikit-learn",
+        "Gaussian Processes",
+        "Foundation-Model Fine-Tuning"
+      ]
+    },
+    {
+      "group": "Web",
+      "items": [
+        "Node.js",
+        "Vue.js",
+        "HTML",
+        "CSS"
+      ]
+    },
+    {
+      "group": "Data Stores",
+      "items": [
+        "MySQL",
+        "SQLite",
+        "HDF5"
+      ]
+    },
+    {
+      "group": "Tools",
+      "items": [
+        "Git",
+        "Slurm / HPC",
+        "Blender",
+        "SolidWorks"
+      ]
+    },
+    {
+      "group": "Spoken",
+      "items": [
+        "English",
+        "Mandarin",
+        "Cantonese"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Website",
+      "url": "https://jackiectl.github.io",
+      "badge": "Website-jackiectl.github.io-b2382c?style=flat&logo=jekyll&logoColor=white",
+      "icon": "globe",
+      "live": true
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/",
+      "badge": "LinkedIn-Tianlang%20(Jackie)%20Chen-0A66C2?style=flat&logo=linkedin&logoColor=white",
+      "live": true,
+      "icon": "linkedin"
+    },
+    {
+      "label": "Email",
+      "url": "mailto:ctlang@umich.edu",
+      "badge": "Email-ctlang%40umich.edu-D14836?style=flat&logo=maildotru&logoColor=white",
+      "live": true,
+      "icon": "envelope-o"
+    }
+  ],
+  "coming_soon": [
+    {
+      "label": "jackiectl.com",
+      "what": "Dim Sum Parlor — a 3D teahouse you can walk through"
+    },
+    {
+      "label": "Google Scholar",
+      "what": ""
+    }
+  ],
+  "labels": {
+    "timeline_more": "To be continued · 敬請期待",
+    "research_more": "More steamers on the next cart · 敬請期待",
+    "publications_none": "In preparation.",
+    "experience_more": "Next role, next cart · 敬請期待",
+    "coursework_more": "More on the menu each term · 敬請期待",
+    "music_none": "Recordings not uploaded yet · 敬請期待",
+    "sports_none": "To be filled in · 敬請期待"
+  }
 }

@@ -1,0 +1,60 @@
+name: Refresh stats card
+
+# Self-hosted alternative to calling github-stats-extended.vercel.app at render time.
+# The card is generated here and committed as a static SVG, which buys three things:
+#   - no third-party service holding a token that can read private repos
+#   - no camo cache staleness (assets/ is served through /raw/, same as the contribution graph)
+#   - the card keeps working if the public instance goes down, like two others already have
+#
+# Token: uses STATS_PAT if that secret exists, otherwise the built-in GITHUB_TOKEN.
+#   - GITHUB_TOKEN  -> public repositories only (no setup, no risk)
+#   - STATS_PAT     -> add a classic PAT with `repo` + `read:user` to include PRIVATE repos
+# Adding or removing that secret switches behaviour with no code change.
+
+on:
+  schedule:
+    - cron: "37 4 * * *"   # daily, 04:37 UTC — offset from the contribution graph job
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/stats-cards.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate stats card (dark)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=jackiectl&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000&theme=gruvbox
+          path: assets/stats-dark.svg
+          token: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Generate stats card (light)
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=jackiectl&show_icons=true&hide_border=true&include_all_commits=true&bg_color=00000000&theme=gruvbox_light
+          path: assets/stats-light.svg
+          token: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Commit if the numbers moved
+        run: |
+          # Commit as the bot, NOT as jackiectl. GitHub credits contributions to the commit
+          # author, so committing as the owner would make this daily refresh a contribution
+          # in its own right — inflating the very commit count the card reports.
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/stats-*.svg
+          if git diff --cached --quiet; then
+            echo "stats unchanged — nothing to commit"
+            exit 0
+          fi
+          git commit -m "Refresh stats card"
+          git push

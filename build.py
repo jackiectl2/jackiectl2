@@ -46,13 +46,14 @@ def themed_card(card, user):
 
 def local_card(card, n):
     """Same light/dark trick, but pointing at SVGs committed in this repo rather than a
-    third-party host — see tools/contrib.py for why."""
+    third-party host — see tools/contrib.py and .github/workflows/stats-cards.yml for why."""
     alt = card["alt"].replace("{n}", str(n))
+    h = ' height="%s"' % card["height"] if card.get("height") else ""
     return (
         '<picture>\n'
         '  <source media="(prefers-color-scheme: dark)" srcset="%s">\n'
-        '  <img alt="%s" src="%s">\n'
-        '</picture>' % (card["dark"], alt, card["light"])
+        '  <img alt="%s"%s src="%s">\n'
+        '</picture>' % (card["dark"], alt, h, card["light"])
     )
 
 
@@ -90,7 +91,11 @@ def build(d):
     add("")
     add('<div align="center">')
     add("")
-    add(themed_card(cards["stats"], user))
+    # cards.active_stats decides where the stats card comes from; the other config stays put.
+    if cards.get("active_stats") == "local":
+        add(local_card(cards["stats_local"], user))
+    else:
+        add(themed_card(cards["stats"], user))
     add(themed_card(cards["streak"], user))
     add("")
     # cards.active_graph decides which contribution graph ships; the other stays configured.
