@@ -22,6 +22,8 @@ on:
     #
     # The cards are served from assets/ through /raw/, which is not behind camo, so a viewer
     # sees a new number the moment this job commits — this interval is the only latency there is.
+    #
+    # Every 29th day is skipped; the "Decide whether today is a rest day" step below explains why.
     - cron: "7 */8 * * *"
   workflow_dispatch:
   push:
@@ -39,10 +41,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Twenty-eight days of refreshing, then one day left alone, repeating forever.
+      #
+      # Cron cannot express a 29-day cycle: its day-of-month field is tied to the calendar,
+      # and months are 28-31 days long, so any fixed set of dates drifts. The cycle position
+      # is therefore counted from a fixed anchor date instead — no state file, nothing to
+      # reset, and it stays correct indefinitely. 29 is not a multiple of 7, so the rest day
+      # walks through the week rather than always landing on the same weekday.
+      #
+      # Only scheduled runs rest. A push or a manual dispatch is someone asking for a
+      # refresh on purpose, and should never be silently swallowed by the calendar.
+      - name: Decide whether today is a rest day
+        id: gate
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import os, sys
+          from datetime import datetime, timezone, date
+
+          ANCHOR = date(2026, 7, 23)   # cycle day 0
+          ACTIVE, REST = 28, 1
+          CYCLE = ACTIVE + REST
+
+          today = datetime.now(timezone.utc).date()      # cron is UTC, so the day is too
+          day = (today - ANCHOR).days % CYCLE            # Python's % is non-negative
+          resting = day >= ACTIVE
+          scheduled = os.environ["EVENT"] == "schedule"
+
+          sys.stderr.write("cycle day %d of %d%s\n"
+                           % (day + 1, CYCLE, " -- rest day" if resting else ""))
+          if resting and not scheduled:
+              sys.stderr.write("rest day, but this run was requested explicitly -- refreshing\n")
+          print("skip=%s" % ("true" if (resting and scheduled) else "false"))
+          PY
+
       # Which token got used is otherwise invisible, and it is the difference between the
       # card showing public-only numbers and real ones. Compared as a boolean expression so
       # the value itself never reaches the shell.
       - name: Report which token is in use
+        if: steps.gate.outputs.skip != 'true'
         env:
           HAS_PAT: ${{ secrets.STATS_PAT != '' }}
         run: |
@@ -55,24 +93,29 @@ jobs:
       # Ours now. The upstream action's row labels are fixed, and one of them prints
       # "(last year)" over a number that has no time window — see tools/stats.py.
       - name: Generate stats card
+        if: steps.gate.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
         run: python3 tools/stats.py
 
       - name: Generate streak card
+        if: steps.gate.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
         run: python3 tools/streak.py
 
       - name: Generate contribution graph
+        if: steps.gate.outputs.skip != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
         run: python3 tools/contrib.py
 
       - name: Rebuild README from the data
+        if: steps.gate.outputs.skip != 'true'
         run: python3 build.py
 
       - name: Commit if the numbers moved
+        if: steps.gate.outputs.skip != 'true'
         run: |
           # Authored by jackiectl so the refresh counts as a contribution, which is the
           # owner's decision. Note what that implies: the commit raises the commit count the
