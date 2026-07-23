@@ -14,7 +14,12 @@ name: Refresh profile cards
 
 on:
   schedule:
-    - cron: "37 4 * * *"   # daily, 04:37 UTC — offset from the contribution graph job
+    # Every three hours. The cards are served from assets/ through /raw/, which is not behind
+    # camo, so a viewer sees a new number the moment this job commits — the refresh interval
+    # is the only latency there is. Minute 7 rather than 0 on purpose: GitHub queues scheduled
+    # runs and the top of the hour is the most contended slot, so :07 starts sooner in
+    # practice. A run that finds no changed number commits nothing, so idle periods stay silent.
+    - cron: "7 */3 * * *"
   workflow_dispatch:
   push:
     paths:
