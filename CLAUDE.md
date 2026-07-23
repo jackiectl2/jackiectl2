@@ -142,12 +142,25 @@ fill 是 `#427b58`(深绿) 不是浅灰, 白底上读得清.
 
 ## 3. workflow: `.github/workflows/stats-cards.yml` (唯一一个)
 
-每天 04:37 UTC + `workflow_dispatch` + 改到 `tools/**` / `data/profile.json` / 自身时触发.
+`cron: "7 */3 * * *"`(每三小时) + `workflow_dispatch` + 改到 `tools/**` / `data/profile.json` / 自身时触发.
 一次跑完: 报告用了哪个 token → 生成 stats(暗/亮) → streak → 贡献图 → `build.py` → **只在有变化时提交一次**.
 
 - ⚠ **我的 PAT 触发不了它** (`Workflows: RW` 是改文件, 运行要 `Actions` 权限, 没有).
   要手动跑: 用户在 Actions 页点, 或推一个动到上述路径的 commit.
 - 之前一度有两个 workflow 并存, **实测撞车过** (push rejected). 现在只留这一个.
+
+### 🔴 schedule 会迟到几小时, push 秒跑
+
+实测 (2026-07-23): `cron: "37 4 * * *"` 那次**实际 `07:17 UTC` 才跑, 迟到 2h40m**;
+次日 `04:37 UTC` 那次到 `05:20 UTC` 仍未触发. 同期 6 次 `push` 触发的全部立即执行.
+(这一段的时间戳一律是 **UTC**, 因为 GitHub 的 cron 和 run 日志都只用 UTC; 本机是 EDT, 差 4 小时.)
+GitHub 的 scheduled workflow 是排队制, 高负载时整点最挤 —— 所以
+
+1. **cron 分钟选 `7` 这种非整点**, 避开最挤的槽;
+2. **判断"卡片是不是坏了"之前, 先看 `gh run list` 里最后一次成功运行的时间戳**.
+   卡上的数字只反映**那一刻**的事实, 不是"现在". 已经误判过一次:
+   Total Issues 显示 0, 而当时 9 个 issue **全部创建于最后一次运行之后** —— 代码没问题, 是卡过期.
+3. 要立刻刷新: 推一个动到 `tools/**` 的 commit (push 链路不排队), 或在 Actions 页点 Run workflow.
 
 ## 4. 状态 / 待办
 
