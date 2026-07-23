@@ -106,14 +106,25 @@ README.md           ← 生成物. 手改会被下次 build 覆盖
   `months=24` 已实测通过 (710 天跨度 / 711 天数据 / 零报错). 不分块直接报错.
 - Y 轴用 `nice_axis()` 取**整十步长** (0/10/../70), 不是把最大值等分 5 份 (会得到 0/16/../80).
 
-### 🔴 两个坑 (都已避开, 别改回去)
+### 提交身份: `jackiectl` —— 刷新**算**一次 contribution (用户 2026-07-23 定, 别改回 bot)
 
-1. **Action 必须以 `github-actions[bot]` 身份提交, 不能用 `jackiectl`.**
-   GitHub 按 commit **author** 归属贡献 —— 用你的身份提交, 这个 commit 本身就变成一次 contribution,
-   **把它要展示的那个数字给刷上去了**, 而且每天 +1, 永久自我膨胀. 这是数据造假.
-   (这是本项目里唯一一处**故意不遵守**"每个 commit 双署名" 的地方, 理由在此.)
-2. **SVG 里不要写 "updated <日期>" 水印.** 日期每天都变 → 每天产生 diff → 逼出每日空提交
-   → 又回到坑 1. 图只在**真实贡献数变化时**才更新.
+Action 以 **`jackiectl` + `272573266+jackiectl@users.noreply.github.com`** 提交,
+带 `Co-Authored-By: Claude` trailer (和全局的双署名规则一致, 本仓库不再是例外).
+
+**用户是在知道下面这个后果之后拍板的, 不要再"好心"改回 `github-actions[bot]`:**
+
+GitHub 按 commit **author** 归属贡献, 所以这个 commit 自己就是一次 contribution ——
+于是 Total Commits +1 → **下次运行必定发现数字变了 → 必定再提交一次**.
+刷新因此变成**自维持**的: 每个 schedule 槽固定产出一个 commit (现在 8 小时一次, 3 次/天),
+而不是"只在有真实活动时才提交". `git diff --cached --quiet` 那个短路实际上永远不会命中.
+
+> trailer 用**两个 `-m`** 写, 不要写成一个多行字符串 —— YAML 块标量会把缩进带进 message,
+> 而 trailer 只有顶格才算数. 已实测: `%(trailers:key=Co-Authored-By)` 能取到值.
+
+### 🔴 SVG 里不要写 "updated <日期>" 水印
+
+日期每天都变 → 图会在**贡献数根本没动**的日子也产生 diff. 现在提交身份是 `jackiectl`,
+这种"纯水印 diff"会变成一次真的 contribution, 内容却是零信息. 图只该在**数字变化时**才变.
 
 ### 其他约束
 
@@ -142,7 +153,9 @@ fill 是 `#427b58`(深绿) 不是浅灰, 白底上读得清.
 
 ## 3. workflow: `.github/workflows/stats-cards.yml` (唯一一个)
 
-`cron: "7 */3 * * *"`(每三小时) + `workflow_dispatch` + 改到 `tools/**` / `data/profile.json` / 自身时触发.
+`cron: "7 */8 * * *"`(每 8 小时: `00:07 / 08:07 / 16:07 UTC`, 每天 3 次) + `workflow_dispatch`
++ 改到 `tools/**` / `data/profile.json` / 自身时触发.
+⚠ 小时步长要**能整除 24** —— 写 `*/9` 会变成 `00/09/18`, 最后一段只隔 6 小时, 不是等间隔.
 一次跑完: 报告用了哪个 token → 生成 stats(暗/亮) → streak → 贡献图 → `build.py` → **只在有变化时提交一次**.
 
 - ⚠ **我的 PAT 触发不了它** (`Workflows: RW` 是改文件, 运行要 `Actions` 权限, 没有).

@@ -14,12 +14,15 @@ name: Refresh profile cards
 
 on:
   schedule:
-    # Every three hours. The cards are served from assets/ through /raw/, which is not behind
-    # camo, so a viewer sees a new number the moment this job commits — the refresh interval
-    # is the only latency there is. Minute 7 rather than 0 on purpose: GitHub queues scheduled
-    # runs and the top of the hour is the most contended slot, so :07 starts sooner in
-    # practice. A run that finds no changed number commits nothing, so idle periods stay silent.
-    - cron: "7 */3 * * *"
+    # Every eight hours: 00:07, 08:07, 16:07 UTC. Evenly spaced, because 8 divides 24 —
+    # a */9 would have fired at 00/09/18 and left a six-hour gap at the end of each day.
+    #
+    # Minute 7 rather than 0 on purpose: GitHub queues scheduled runs and the top of the hour
+    # is the most contended slot, so :07 starts sooner in practice.
+    #
+    # The cards are served from assets/ through /raw/, which is not behind camo, so a viewer
+    # sees a new number the moment this job commits — this interval is the only latency there is.
+    - cron: "7 */8 * * *"
   workflow_dispatch:
   push:
     paths:
@@ -71,15 +74,21 @@ jobs:
 
       - name: Commit if the numbers moved
         run: |
-          # Commit as the bot, NOT as jackiectl. GitHub credits contributions to the commit
-          # author, so committing as the owner would make this daily refresh a contribution
-          # in its own right — inflating the very commit count the card reports.
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Authored by jackiectl so the refresh counts as a contribution, which is the
+          # owner's decision. Note what that implies: the commit raises the commit count the
+          # card reports, so the next run always finds a changed number and commits again.
+          # The refresh becomes self-sustaining — expect one commit per scheduled run rather
+          # than only on real activity.
+          git config user.name  "jackiectl"
+          git config user.email "272573266+jackiectl@users.noreply.github.com"
           git add assets README.md
           if git diff --cached --quiet; then
             echo "no card changed — nothing to commit"
             exit 0
           fi
-          git commit -m "Refresh profile cards"
+          # Two -m flags, not one multi-line string: inside this block scalar the second line
+          # would carry the block's indentation into the message, and a trailer only counts
+          # when it starts the line.
+          git commit -m "Refresh profile cards" \
+                     -m "Co-Authored-By: Claude <noreply@anthropic.com>"
           git push
