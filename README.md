@@ -87,7 +87,7 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 
 </details>
 
-*To be continued · 敬請期待*
+*More steamers on the next cart · 敬請期待*
 
 ## Publications
 
@@ -110,13 +110,13 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 - [Website](https://jackiectl.github.io)
 - [LinkedIn](https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/)
 - [Email](mailto:ctlang@umich.edu)
-- **jackiectl.com** — a 3D website you can walk through *(coming soon)*
+- **jackiectl.com** — Dim Sum Parlor — a 3D teahouse you can walk through *(coming soon)*
 - **Google Scholar** *(coming soon)*
 
 ---
 
-<!-- <div align="center">
+<div align="center">
 
 <sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub>
 
-</div> -->
+</div>
