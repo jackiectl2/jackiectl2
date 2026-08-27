@@ -111,7 +111,7 @@ def fetch(token, user):
 
     stars = sum(n["stargazers"]["totalCount"] for n in u["repositories"]["nodes"])
     return {
-        "name": u["name"] or u["login"],
+        "name": (u["name"] or u["login"]).strip(),
         "stars": stars,
         "prs": u["pullRequests"]["totalCount"],
         "issues": u["openIssues"]["totalCount"] + u["closedIssues"]["totalCount"],
@@ -129,7 +129,7 @@ def fetch_all_commits(token, user):
         "https://api.github.com/search/commits?per_page=1&q=author:%s" % user,
         headers={"Accept": "application/vnd.github.cloak-preview",
                  "Authorization": "token " + token,
-                 "User-Agent": "jackiectl-profile-readme"},
+                 "User-Agent": "jackiectl2-profile-readme"},
     )
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)["total_count"]
@@ -189,15 +189,27 @@ def render(theme, st, level, pct):
 
 def main():
     with open(DATA, encoding="utf-8") as f:
-        user = json.load(f)["identity"]["github"]
+        data = json.load(f)
+    user = data["identity"]["github"]
 
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if not token:
         raise SystemExit("set GITHUB_TOKEN (locally: GITHUB_TOKEN=$(gh auth token) ...)")
 
     st = fetch(token, user)
+    migration = data.get("account_migration", {})
+    floors = migration.get("legacy_stats_floor", {})
+    for field in ("stars", "commits", "prs", "issues", "contributed"):
+        if field in floors:
+            st[field] = max(st[field], int(floors[field]))
     level, pct = calculate_rank(True, st["commits"], st["prs"], st["issues"],
                                 st["reviews"], st["stars"], st["followers"])
+    rank_floor = floors.get("rank")
+    if rank_floor in LEVELS and LEVELS.index(level) > LEVELS.index(rank_floor):
+        level = rank_floor
+        index = LEVELS.index(rank_floor)
+        lower = THRESHOLDS[index - 1] if index else 0
+        pct = (lower + THRESHOLDS[index]) / 2.0
 
     if not os.path.isdir(ASSETS):
         os.makedirs(ASSETS)

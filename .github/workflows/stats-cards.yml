@@ -117,13 +117,13 @@ jobs:
       - name: Commit if the numbers moved
         if: steps.gate.outputs.skip != 'true'
         run: |
-          # Authored by jackiectl so the refresh counts as a contribution, which is the
+          # Authored by jackiectl2 so the refresh counts as a contribution, which is the
           # owner's decision. Note what that implies: the commit raises the commit count the
           # card reports, so the next run always finds a changed number and commits again.
           # The refresh becomes self-sustaining — expect one commit per scheduled run rather
           # than only on real activity.
-          git config user.name  "jackiectl"
-          git config user.email "272573266+jackiectl@users.noreply.github.com"
+          git config user.name  "Tianlang (Jackie) Chen"
+          git config user.email "305351710+jackiectl2@users.noreply.github.com"
           git add assets README.md
           if git diff --cached --quiet; then
             echo "no card changed — nothing to commit"

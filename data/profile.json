@@ -3,10 +3,30 @@
   "identity": {
     "display": "Tianlang (Jackie) Chen",
     "name_zh": "陈天朗",
-    "github": "jackiectl",
+    "github": "jackiectl2",
     "email": "ctlang@umich.edu",
     "role": "B.S.E. Candidate, Data Science",
     "affiliation": "University of Michigan, Ann Arbor"
+  },
+  "account_migration": {
+    "legacy_account": "jackiectl",
+    "successor_account": "jackiectl2",
+    "cutover_date": "2026-07-27",
+    "legacy_since": "2026-03-31",
+    "legacy_total_contributions": 987,
+    "legacy_longest_streak": 13,
+    "legacy_longest_start": "2026-05-25",
+    "legacy_longest_end": "2026-06-06",
+    "freeze_streak_below_existing": true,
+    "freeze_rolling_graph_below_existing": true,
+    "legacy_stats_floor": {
+      "stars": 79,
+      "commits": 660,
+      "prs": 66,
+      "issues": 84,
+      "contributed": 3,
+      "rank": "B+"
+    }
   },
   "brand": {
     "name": "Dim Sum Parlor",
@@ -48,7 +68,7 @@
       "months": 12,
       "dark": "assets/contributions-dark.svg",
       "light": "assets/contributions-light.svg",
-      "alt": "Contributions per day for jackiectl, last {n} days",
+      "alt": "Contributions per day for jackiectl2, last {n} days",
       "days": 31
     },
     "active_graph": "local_daily",
@@ -66,7 +86,7 @@
       "dark": "assets/stats-dark.svg",
       "light": "assets/stats-light.svg",
       "height": "170",
-      "alt": "GitHub stats for jackiectl"
+      "alt": "GitHub stats for jackiectl2"
     },
     "active_streak": "local",
     "_active_streak": "'hosted' = streak-stats.demolab.com. 'local' = assets/streak-{dark,light}.svg from tools/streak.py. Local is the default: the hosted one returns an error card on upstream failures, and that error is a 200 SVG with max-age=86400, so camo serves the sad face for a full day. Numbers were verified identical before switching.",
@@ -74,7 +94,7 @@
       "dark": "assets/streak-dark.svg",
       "light": "assets/streak-light.svg",
       "height": "170",
-      "alt": "Contribution streak for jackiectl"
+      "alt": "Contribution streak for jackiectl2"
     }
   },
   "timeline": [
@@ -282,8 +302,8 @@
   "links": [
     {
       "label": "Website",
-      "url": "https://jackiectl.github.io",
-      "badge": "Website-jackiectl.github.io-b2382c?style=flat&logo=jekyll&logoColor=white",
+      "url": "https://jackiectl2.github.io",
+      "badge": "Website-jackiectl2.github.io-b2382c?style=flat&logo=jekyll&logoColor=white",
       "icon": "globe",
       "live": true
     },

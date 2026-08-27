@@ -16,13 +16,16 @@ Numbers verified against the service before switching: total 703 = 703, longest 
 
 import os
 import sys
-from datetime import datetime, timezone
+import json
+import re
+from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from contrib import THEMES, graphql, fetch_daily  # noqa: E402
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS = os.path.join(HERE, "assets")
+DATA = os.path.join(HERE, "data", "profile.json")
 
 MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -124,20 +127,40 @@ def main():
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if not token:
         raise SystemExit("set GITHUB_TOKEN (locally: GITHUB_TOKEN=$(gh auth token) ...)")
-    user = "jackiectl"
-
-    created = graphql(token, '{ user(login: "%s") { createdAt } }' % user)["user"]["createdAt"]
-    start = datetime.strptime(created[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    with open(DATA, encoding="utf-8") as f:
+        data = json.load(f)
+    user = data["identity"]["github"]
+    migration = data.get("account_migration")
     now = datetime.now(timezone.utc)
-
-    daily = fetch_daily(token, user, start, now)
     today = now.strftime("%Y-%m-%d")
-    total, cur, cur_rng, longest, long_rng = streaks(daily, today)
-    since = "%s - Present" % pretty(created[:10])
+
+    if migration:
+        cutover = datetime.strptime(migration["cutover_date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        start = cutover + timedelta(days=1)
+        daily = fetch_daily(token, user, start, now)
+        post_total, cur, cur_rng, post_longest, post_long_rng = streaks(daily, today)
+        total = int(migration["legacy_total_contributions"]) + post_total
+        legacy_longest = int(migration["legacy_longest_streak"])
+        if post_longest > legacy_longest:
+            longest, long_rng = post_longest, post_long_rng
+        else:
+            longest = legacy_longest
+            long_rng = "%s - %s" % (
+                pretty(migration["legacy_longest_start"]),
+                pretty(migration["legacy_longest_end"]),
+            )
+        since = "%s - Present" % pretty(migration["legacy_since"])
+    else:
+        created = graphql(token, '{ user(login: "%s") { createdAt } }' % user)["user"]["createdAt"]
+        start = datetime.strptime(created[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        daily = fetch_daily(token, user, start, now)
+        total, cur, cur_rng, longest, long_rng = streaks(daily, today)
+        since = "%s - Present" % pretty(created[:10])
 
     if not os.path.isdir(ASSETS):
         os.makedirs(ASSETS)
     stale = False
+    kept_existing = 0
     for theme in ("dark", "light"):
         svg = render(theme, total, cur, cur_rng, longest, long_rng, since)
         path = os.path.join(ASSETS, "streak-%s.svg" % theme)
@@ -145,6 +168,14 @@ def main():
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 old = f.read()
+        if migration and migration.get("freeze_streak_below_existing") and old:
+            match = re.search(r"<title>([0-9,]+) contributions", old)
+            old_total = int(match.group(1).replace(",", "")) if match else 0
+            if total < old_total:
+                print("kept existing %s streak card: candidate total %d is below migration floor %d"
+                      % (theme, total, old_total))
+                kept_existing += 1
+                continue
         if "--check" in sys.argv:
             if old != svg:
                 stale = True
@@ -156,8 +187,12 @@ def main():
         print("streak SVGs %s" % ("are STALE — rerun tools/streak.py" if stale else "are up to date"))
         return 1 if stale else 0
 
-    print("wrote streak cards: total=%d  current=%d (%s)  longest=%d (%s)"
-          % (total, cur, cur_rng, longest, long_rng))
+    if kept_existing:
+        print("kept %d existing streak card(s); candidate total=%d current=%d longest=%d"
+              % (kept_existing, total, cur, longest))
+    else:
+        print("wrote streak cards: total=%d  current=%d (%s)  longest=%d (%s)"
+              % (total, cur, cur_rng, longest, long_rng))
     return 0
 
 

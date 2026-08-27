@@ -4,9 +4,9 @@
 
 **B.S.E. Candidate, Data Science** · University of Michigan, Ann Arbor
 
-<img alt="Profile views" src="https://komarev.com/ghpvc/?username=jackiectl&label=Profile%20Views&color=d97706&style=flat">
-<img alt="Followers" src="https://img.shields.io/github/followers/jackiectl?style=flat&color=d97706&labelColor=3c3836&logo=github">
-<a href="https://jackiectl.github.io"><img alt="Website" src="https://img.shields.io/badge/Website-jackiectl.github.io-b2382c?style=flat&logo=jekyll&logoColor=white"></a>
+<img alt="Profile views" src="https://komarev.com/ghpvc/?username=jackiectl2&label=Profile%20Views&color=d97706&style=flat">
+<img alt="Followers" src="https://img.shields.io/github/followers/jackiectl2?style=flat&color=d97706&labelColor=3c3836&logo=github">
+<a href="https://jackiectl2.github.io"><img alt="Website" src="https://img.shields.io/badge/Website-jackiectl2.github.io-b2382c?style=flat&logo=jekyll&logoColor=white"></a>
 <a href="https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-Tianlang%20(Jackie)%20Chen-0A66C2?style=flat&logo=linkedin&logoColor=white"></a>
 <a href="mailto:ctlang@umich.edu"><img alt="Email" src="https://img.shields.io/badge/Email-ctlang%40umich.edu-D14836?style=flat&logo=maildotru&logoColor=white"></a>
 
@@ -20,16 +20,16 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg">
-  <img alt="GitHub stats for jackiectl" height="170" src="assets/stats-light.svg">
+  <img alt="GitHub stats for jackiectl2" height="170" src="assets/stats-light.svg">
 </picture>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/streak-dark.svg">
-  <img alt="Contribution streak for jackiectl" height="170" src="assets/streak-light.svg">
+  <img alt="Contribution streak for jackiectl2" height="170" src="assets/streak-light.svg">
 </picture>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg">
-  <img alt="Contributions per day for jackiectl, last 31 days" src="assets/contributions-light.svg">
+  <img alt="Contributions per day for jackiectl2, last 31 days" src="assets/contributions-light.svg">
 </picture>
 
 </div>
@@ -107,7 +107,7 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 
 ## Elsewhere
 
-- [Website](https://jackiectl.github.io)
+- [Website](https://jackiectl2.github.io)
 - [LinkedIn](https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/)
 - [Email](mailto:ctlang@umich.edu)
 - **jackiectl.com** — Dim Sum Parlor — a 3D teahouse you can walk through *(coming soon)*

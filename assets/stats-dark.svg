@@ -17,6 +17,6 @@
 <text x="50" y="170" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#fabd2f">Contributed to:</text>
 <text x="280" y="170" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" fill="#ebdbb2">3</text>
 <circle cx="370" cy="100" r="40" fill="none" stroke="#7c6f64" stroke-width="6"/>
-<circle cx="370" cy="100" r="40" fill="none" stroke="#fabd2f" stroke-width="6" stroke-linecap="round" stroke-dasharray="128.09 251.33" transform="rotate(-90 370 100)"/>
+<circle cx="370" cy="100" r="40" fill="none" stroke="#fabd2f" stroke-width="6" stroke-linecap="round" stroke-dasharray="129.24 251.33" transform="rotate(-90 370 100)"/>
 <text x="370" y="108" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="24" font-weight="700" fill="#fabd2f">B+</text>
 </svg>
