@@ -103,6 +103,25 @@ def fetch_daily(token, user, start, end):
     return daily
 
 
+def rolling_graph_freeze_active(data, window_start):
+    """Keep a legacy graph only while the rolling window still crosses the account cutover.
+
+    A rolling total is allowed to decrease as older days leave the window, so the previous
+    graph cannot be treated as a permanent numeric floor. Once every day in the requested
+    window belongs to the successor account, the live graph is authoritative.
+    """
+    migration = data.get("account_migration", {})
+    if not migration.get("freeze_rolling_graph_below_existing", False):
+        return False
+
+    cutover = migration.get("cutover_date")
+    if not cutover:
+        return True
+
+    cutover_day = datetime.strptime(cutover, "%Y-%m-%d").date()
+    return window_start.date() <= cutover_day
+
+
 def render(months, counts, total, theme, user):
     """A bar chart. No <style> and no <script>: GitHub sanitises those out of README SVGs."""
     c = THEMES[theme]
@@ -323,7 +342,7 @@ def main():
         os.makedirs(ASSETS)
     stale = False
     kept_existing = 0
-    freeze_floor = d.get("account_migration", {}).get("freeze_rolling_graph_below_existing", False)
+    freeze_floor = rolling_graph_freeze_active(d, start)
     for theme in ("dark", "light"):
         svg = make(theme)
         path = os.path.join(ASSETS, "contributions-%s.svg" % theme)
