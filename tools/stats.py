@@ -12,7 +12,6 @@ Definitions are copied from the upstream fetcher so the numbers do not silently 
   prs          user.pullRequests.totalCount
   issues       open + closed
   contributed  repositoriesContributedTo(COMMIT, ISSUE, PULL_REQUEST, REPOSITORY)  — all time
-The rank is a direct port of packages/core/src/calculateRank.ts (MIT).
 
 What the token can see decides what the numbers include: STATS_PAT reaches private repos,
 GITHUB_TOKEN does not.
@@ -56,52 +55,15 @@ ICONS = {
             "0L5.4 15.7a.25.25 0 0 1-.4-.2Z",
 }
 
-THRESHOLDS = [1, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
-LEVELS = ["S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C"]
-
-
-def exponential_cdf(x):
-    return 1 - 2 ** -x
-
-
-def log_normal_cdf(x):
-    return x / (1 + x)
-
-
-def calculate_rank(all_commits, commits, prs, issues, reviews, stars, followers):
-    """Direct port of calculateRank.ts. Keeping the constants identical is the point — a
-    home-grown formula would quietly change the letter on the card."""
-    commits_median = 1000 if all_commits else 250
-    weights = {"commits": 2, "prs": 3, "issues": 1, "reviews": 1, "stars": 4, "followers": 1}
-    total_weight = sum(weights.values())
-
-    rank = 1 - (
-        weights["commits"] * exponential_cdf(commits / float(commits_median))
-        + weights["prs"] * exponential_cdf(prs / 50.0)
-        + weights["issues"] * exponential_cdf(issues / 25.0)
-        + weights["reviews"] * exponential_cdf(reviews / 2.0)
-        + weights["stars"] * log_normal_cdf(stars / 50.0)
-        + weights["followers"] * log_normal_cdf(followers / 10.0)
-    ) / total_weight
-
-    pct = rank * 100
-    for i, t in enumerate(THRESHOLDS):
-        if pct <= t:
-            return LEVELS[i], pct
-    return LEVELS[-1], pct
-
-
 def fetch(token, user):
     q = """
     { user(login: "%s") {
         name login
-        reviews: contributionsCollection { totalPullRequestReviewContributions }
         repositoriesContributedTo(first: 1,
           contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY]) { totalCount }
         pullRequests(first: 1) { totalCount }
         openIssues: issues(states: OPEN) { totalCount }
         closedIssues: issues(states: CLOSED) { totalCount }
-        followers { totalCount }
         repositories(first: 100, ownerAffiliations: OWNER,
           orderBy: {direction: DESC, field: STARGAZERS}) {
             nodes { stargazers { totalCount } } }
@@ -115,8 +77,6 @@ def fetch(token, user):
         "stars": stars,
         "prs": u["pullRequests"]["totalCount"],
         "issues": u["openIssues"]["totalCount"] + u["closedIssues"]["totalCount"],
-        "reviews": u["reviews"]["totalPullRequestReviewContributions"],
-        "followers": u["followers"]["totalCount"],
         "contributed": u["repositoriesContributedTo"]["totalCount"],
         "commits": fetch_all_commits(token, user),
     }
@@ -135,17 +95,17 @@ def fetch_all_commits(token, user):
         return json.load(r)["total_count"]
 
 
-def render(theme, st, level, pct):
+def render(theme, st):
     """Inline fills only — no <style>, no <script>. The upstream card fades its text in from
     opacity 0, which means it is blank for the first moment of every page load."""
     c = THEMES[theme]
-    W, H = 467, 195
+    W, H = 310, 195
     fam = "-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif"
     s = []
     s.append('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
              'role="img" aria-label="GitHub statistics">' % (W, H, W, H))
-    s.append('<title>%s: %d stars, %d commits, %d pull requests, rank %s</title>'
-             % (st["name"], st["stars"], st["commits"], st["prs"], level))
+    s.append('<title>%s: %d stars, %d commits, %d pull requests</title>'
+             % (st["name"], st["stars"], st["commits"], st["prs"]))
 
     s.append('<text x="25" y="34" font-family="%s" font-size="16" font-weight="600" fill="%s">'
              "%s's GitHub Stats</text>" % (fam, c["title"], st["name"]))
@@ -170,19 +130,6 @@ def render(theme, st, level, pct):
                  % (y, fam, c["text"], "{:,}".format(value)))
         y += 25
 
-    # Rank ring. The arc runs clockwise from 12 o'clock, longer for a better percentile.
-    cx, cy, r = 370, 100, 40
-    s.append('<circle cx="%d" cy="%d" r="%d" fill="none" stroke="%s" stroke-width="6"/>'
-             % (cx, cy, r, c["bar_dim"]))
-    frac = max(0.0, min(1.0, 1 - pct / 100.0))
-    circ = 2 * 3.141592653589793 * r
-    s.append('<circle cx="%d" cy="%d" r="%d" fill="none" stroke="%s" stroke-width="6" '
-             'stroke-linecap="round" stroke-dasharray="%.2f %.2f" '
-             'transform="rotate(-90 %d %d)"/>'
-             % (cx, cy, r, c["bar"], circ * frac, circ, cx, cy))
-    s.append('<text x="%d" y="%d" text-anchor="middle" font-family="%s" font-size="24" '
-             'font-weight="700" fill="%s">%s</text>' % (cx, cy + 8, fam, c["title"], level))
-
     s.append("</svg>")
     return "\n".join(s) + "\n"
 
@@ -202,20 +149,11 @@ def main():
     for field in ("stars", "commits", "prs", "issues", "contributed"):
         if field in floors:
             st[field] = max(st[field], int(floors[field]))
-    level, pct = calculate_rank(True, st["commits"], st["prs"], st["issues"],
-                                st["reviews"], st["stars"], st["followers"])
-    rank_floor = floors.get("rank")
-    if rank_floor in LEVELS and LEVELS.index(level) > LEVELS.index(rank_floor):
-        level = rank_floor
-        index = LEVELS.index(rank_floor)
-        lower = THRESHOLDS[index - 1] if index else 0
-        pct = (lower + THRESHOLDS[index]) / 2.0
-
     if not os.path.isdir(ASSETS):
         os.makedirs(ASSETS)
     stale = False
     for theme in ("dark", "light"):
-        svg = render(theme, st, level, pct)
+        svg = render(theme, st)
         path = os.path.join(ASSETS, "stats-%s.svg" % theme)
         old = ""
         if os.path.exists(path):
@@ -232,8 +170,8 @@ def main():
         print("stats cards %s" % ("are STALE — rerun tools/stats.py" if stale else "are up to date"))
         return 1 if stale else 0
 
-    print("wrote stats cards: stars=%d commits=%d prs=%d issues=%d contributed=%d -> %s (%.1f%%)"
-          % (st["stars"], st["commits"], st["prs"], st["issues"], st["contributed"], level, pct))
+    print("wrote stats cards: stars=%d commits=%d prs=%d issues=%d contributed=%d"
+          % (st["stars"], st["commits"], st["prs"], st["issues"], st["contributed"]))
     return 0
 
 

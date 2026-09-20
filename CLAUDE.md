@@ -75,9 +75,11 @@ README.md           ← 生成物. 手改会被下次 build 覆盖
 |---|---|---|
 | Total Commits | 277 | **540** |
 | Total PRs | 2 | **16** |
-| Rank | C+ | **B-** |
 
 用户 34 个仓库里约 12 个是私有的, `restrictedContributionsCount` 占总贡献的 ~56%.
+
+The stats card intentionally has no letter-rank badge. The owner removed it on 2026-09-20;
+do not reintroduce it.
 
 - **secret 名 `STATS_PAT`**, classic token, scope = `repo` + `read:user`.
   workflow 写的是 `${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}` —— **有就用, 没有就退回公开模式,
