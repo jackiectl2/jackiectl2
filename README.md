@@ -19,6 +19,11 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 <div align="center">
 
 <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/contribution-snake-dark.svg">
+  <img alt="Animated contribution snake for jackiectl2" height="125" src="assets/contribution-snake-light.svg">
+</picture>
+
+<picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/stats-dark.svg">
   <img alt="GitHub stats for jackiectl2" height="170" src="assets/stats-light.svg">
 </picture>
