@@ -87,6 +87,13 @@
       "height": "170",
       "alt": "GitHub stats for jackiectl2"
     },
+    "snake": {
+      "_note": "Generated locally by tools/snake.py from jackiectl2's GitHub contribution calendar. It intentionally does not use the unlicensed Platane/snk implementation.",
+      "dark": "assets/contribution-snake-dark.svg",
+      "light": "assets/contribution-snake-light.svg",
+      "height": "192",
+      "alt": "Animated contribution snake for jackiectl2"
+    },
     "active_streak": "local",
     "_active_streak": "'hosted' = streak-stats.demolab.com. 'local' = assets/streak-{dark,light}.svg from tools/streak.py. Local is the default: the hosted one returns an error card on upstream failures, and that error is a 200 SVG with max-age=86400, so camo serves the sad face for a full day. Numbers were verified identical before switching.",
     "streak_local": {

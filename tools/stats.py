@@ -99,7 +99,9 @@ def render(theme, st):
     """Inline fills only — no <style>, no <script>. The upstream card fades its text in from
     opacity 0, which means it is blank for the first moment of every page load."""
     c = THEMES[theme]
-    W, H = 310, 195
+    # The full title is wider than the five data rows. Keep enough right padding for the
+    # final "s" in "Stats"; the previous 310 px canvas clipped its antialiasing fringe.
+    W, H = 330, 195
     fam = "-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif"
     s = []
     s.append('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
@@ -125,7 +127,7 @@ def render(theme, st):
                  '<path d="%s"/></g>' % (y - 12, c["bar"], ICONS[key]))
         s.append('<text x="50" y="%d" font-family="%s" font-size="14" font-weight="600" '
                  'fill="%s">%s:</text>' % (y, fam, c["title"], label))
-        s.append('<text x="280" y="%d" text-anchor="end" font-family="%s" font-size="14" '
+        s.append('<text x="300" y="%d" text-anchor="end" font-family="%s" font-size="14" '
                  'font-weight="600" fill="%s">%s</text>'
                  % (y, fam, c["text"], "{:,}".format(value)))
         y += 25

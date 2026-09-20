@@ -1,6 +1,6 @@
 name: Refresh profile cards
 
-# All three cards are drawn by our own scripts in tools/ and committed as static SVGs.
+# All four cards are drawn by our own scripts in tools/ and committed as static SVGs.
 # Nothing here calls a card service at render time, which buys four things:
 #   - no third-party service holding a token that can read private repos
 #   - no camo cache staleness (assets/ is served through /raw/)
@@ -109,6 +109,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
         run: python3 tools/contrib.py
+
+      - name: Generate contribution snake
+        if: steps.gate.outputs.skip != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.STATS_PAT || secrets.GITHUB_TOKEN }}
+        run: python3 tools/snake.py
 
       - name: Rebuild README from the data
         if: steps.gate.outputs.skip != 'true'

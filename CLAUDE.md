@@ -36,15 +36,16 @@ README.md           ← 生成物. 手改会被下次 build 覆盖
 - `python3 build.py --check` → README 与 JSON 不一致时 exit 1 (可做 CI).
 - 事实源仍是 `../PROFILE.md`. **先改 PROFILE.md, 再把改动镜像进 `profile.json`.**
 
-## 2. 卡片: 三张全部自建 (2026-07-22)
+## 2. 卡片: 四张全部自建 (2026-09-20)
 
-**profile 上的三张卡现在都由本仓库的 Action 生成, 提交成静态 SVG, 运行时零第三方请求.**
+**profile 上的四张卡现在都由本仓库的 Action 生成, 提交成静态 SVG, 运行时零第三方请求.**
 
 | 卡片 | 原来 | 现在 | 生成器 |
 |---|---|---|---|
-| Stats | `github-stats-extended.vercel.app` | 自己的 Action | `stats-organization/github-readme-stats-action` (钉死 SHA) |
+| Stats | `github-stats-extended.vercel.app` | 自己的代码 | `tools/stats.py` |
 | Streak | `streak-stats.demolab.com` | 自己的代码 | `tools/streak.py` |
 | 贡献图 | `github-readme-activity-graph.vercel.app` | 自己的代码 | `tools/contrib.py` |
+| 贡献蛇 | `Platane/snk` (无许可证, 未采用) | 自己的代码 | `tools/snake.py` |
 
 **为什么值得自建** (三条都是实测踩出来的, 不是洁癖):
 1. **服务会死.** `github-readme-stats` 和 `github-profile-trophy` 都已 `DEPLOYMENT_PAUSED` / `402`.
@@ -52,8 +53,8 @@ README.md           ← 生成物. 手改会被下次 build 覆盖
    那是**合法 200 SVG** 且带 `cache-control: max-age=86400` —— camo 照缓存, 哭脸在 profile 上挂满 24 小时.
 3. **托管版永远只看得到公开数据.** 详见下面 §2.1.
 
-**代价**: 生成器代码仍是第三方的 (stats 那张), 但**钉死到 commit SHA**, 不会在背后变.
-`tools/streak.py` / `tools/contrib.py` 是完全自己写的.
+四张卡的生成器现在都是本仓库自己的代码; Stats 卡使用的图标路径来自 MIT 许可的
+`github/octicons`, 其余渲染逻辑没有第三方运行时依赖.
 
 ### 剩下的第三方 (都不值得或不可能收回)
 
@@ -174,7 +175,7 @@ fill 是 `#427b58`(深绿) 不是浅灰, 白底上读得清.
   10 年模拟里连续工作段长度集合恒为 `[28]`.
 - ⚠ **副作用**: 休息日如果没有别的提交, 贡献连续天数会断. Longest Streak 会稳定在 28 左右,
   Current Streak 每 29 天归零一次 —— 这是这个设计的必然结果, 不是 bug.
-一次跑完: 报告用了哪个 token → 生成 stats(暗/亮) → streak → 贡献图 → `build.py` → **只在有变化时提交一次**.
+一次跑完: 报告用了哪个 token → 生成 stats(暗/亮) → streak → 贡献图 → 贡献蛇 → `build.py` → **只在有变化时提交一次**.
 
 - ⚠ **我的 PAT 触发不了它** (`Workflows: RW` 是改文件, 运行要 `Actions` 权限, 没有).
   要手动跑: 用户在 Actions 页点, 或推一个动到上述路径的 commit.

@@ -91,6 +91,9 @@ def build(d):
     add("")
     add('<div align="center">')
     add("")
+    # The contribution snake leads the section, above the numeric stats and streak cards.
+    add(local_card(cards["snake"], user))
+    add("")
     # cards.active_stats decides where the stats card comes from; the other config stays put.
     if cards.get("active_stats") == "local":
         add(local_card(cards["stats_local"], user))
