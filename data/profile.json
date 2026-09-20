@@ -91,7 +91,7 @@
       "_note": "Generated locally by tools/snake.py from jackiectl2's GitHub contribution calendar. It intentionally does not use the unlicensed Platane/snk implementation.",
       "dark": "assets/contribution-snake-dark.svg",
       "light": "assets/contribution-snake-light.svg",
-      "height": "125",
+      "height": "192",
       "alt": "Animated contribution snake for jackiectl2"
     },
     "active_streak": "local",

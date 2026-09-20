@@ -15,6 +15,7 @@ import html
 import json
 import os
 import sys
+from collections import deque
 from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -22,22 +23,20 @@ from contrib import fetch_daily  # noqa: E402
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(HERE, "data", "profile.json")
-ASSETS = os.path.join(HERE, "assets")
+ASSETS = os.environ.get("SNAKE_ASSETS", os.path.join(HERE, "assets"))
 
 PALETTES = {
     "dark": {
         "empty": "#161b22",
         "levels": ("#0e4429", "#006d32", "#26a641", "#39d353"),
-        "snake": "#a970ff",
-        "snake_tail": "#8957e5",
-        "eye": "#ffffff",
+        "border": "#ffffff0d",
+        "snake": "#800080",
     },
     "light": {
         "empty": "#ebedf0",
         "levels": ("#9be9a8", "#40c463", "#30a14e", "#216e39"),
-        "snake": "#8250df",
-        "snake_tail": "#a475f9",
-        "eye": "#ffffff",
+        "border": "#1b1f230a",
+        "snake": "#800080",
     },
 }
 
@@ -73,87 +72,180 @@ def levels(counts):
     return result
 
 
-def snake_order(columns):
-    """Visit the grid row by row, reversing direction at each edge."""
-    order = []
-    for row in range(7):
-        cols = range(columns) if row % 2 == 0 else range(columns - 1, -1, -1)
-        for col in cols:
-            order.append((col, row))
-    return order
+def next_directions(body):
+    """Prefer continuing straight, then turning, while never reversing into the neck."""
+    head, neck = body[0], body[1]
+    dx, dy = head[0] - neck[0], head[1] - neck[1]
+    return ((dx, dy), (-dy, dx), (dy, -dx), (-dx, -dy))
+
+
+def shortest_snake_path(body, goals, obstacles, columns):
+    """Find a shortest collision-free route from the current four-cell snake to any goal.
+
+    One empty border around the calendar lets the snake route around dense contribution
+    clusters. Optional obstacles are supported for deterministic tests and future layouts.
+    """
+    goals = set(goals)
+    obstacles = set(obstacles) - goals
+    queue = deque([body])
+    parent = {body: None}
+    found = None
+
+    while queue:
+        state = queue.popleft()
+        if state[0] in goals:
+            found = state
+            break
+        head = state[0]
+        for dx, dy in next_directions(state):
+            nxt = (head[0] + dx, head[1] + dy)
+            if not (-1 <= nxt[0] <= columns and -1 <= nxt[1] <= 7):
+                continue
+            # The last tail cell moves away during this step, so entering it is safe.
+            if nxt in state[:-1] or nxt in obstacles:
+                continue
+            new_state = (nxt, state[0], state[1], state[2])
+            if new_state in parent:
+                continue
+            parent[new_state] = state
+            queue.append(new_state)
+
+    if found is None:
+        raise RuntimeError("could not route contribution snake to the next target")
+
+    path = []
+    state = found
+    while parent[state] is not None:
+        path.append(state[0])
+        state = parent[state]
+    path.reverse()
+    return path
+
+
+def plan_route(cell_levels, columns):
+    """Build a route that eats contribution cells from light green through dark green."""
+    by_level = dict((level, set()) for level in range(1, 5))
+    for point, level in cell_levels.items():
+        if level:
+            by_level[level].add(point)
+
+    # Match the reference's opening pose: four purple blocks above the first grid column,
+    # with the large head on the left. The first move turns down into the calendar.
+    body = ((0, -1), (1, -1), (2, -1), (3, -1))
+    route = [body[0], (0, 0)]
+    body = ((0, 0),) + body[:3]
+    eaten_at = {}
+
+    for level in range(1, 5):
+        remaining = by_level[level]
+        if body[0] in remaining:
+            remaining.remove(body[0])
+            eaten_at[body[0]] = len(route) - 1
+
+        while remaining:
+            # The snake may cross a darker square while travelling, but only consumes
+            # targets from the current colour stage. This keeps the progress strip moving
+            # continuously from light green to dark green without letting dense clusters
+            # trap the four-cell body.
+            path = shortest_snake_path(body, remaining, set(), columns)
+            for point in path:
+                route.append(point)
+                body = (point, body[0], body[1], body[2])
+                if point in remaining:
+                    remaining.remove(point)
+                    eaten_at[point] = len(route) - 1
+
+    # Return to the exact opening pose before the animation repeats. Approaching from below
+    # avoids an immediate reversal while the final four cells line up above the grid.
+    path = shortest_snake_path(body, {(4, 0)}, set(), columns)
+    for point in path + [(4, -1), (3, -1), (2, -1), (1, -1), (0, -1)]:
+        if point in body[:-1]:
+            raise RuntimeError("closing route collided with the snake body")
+        route.append(point)
+        body = (point, body[0], body[1], body[2])
+
+    return route, eaten_at
 
 
 def render(theme, user, counts, start, end):
     c = PALETTES[theme]
-    cell, gap = 11, 3
-    pitch = cell + gap
+    cell, pitch = 12, 16
     columns = ((end - start).days // 7) + 1
-    grid_w = columns * cell + (columns - 1) * gap
-    grid_h = 7 * cell + 6 * gap
-    width, height = 860, grid_h + 30
-    left = (width - grid_w) / 2.0
-    top = 15.0
-    duration = 14.0
-    ordered = snake_order(columns)
-    order_index = dict((point, i) for i, point in enumerate(ordered))
-    # Main serpentine route plus the right-edge/top-row return that closes the loop.
-    route_steps = (len(ordered) - 1) + 6 + (columns - 1)
+    width, height = 880, 192
+    duration = 50.0
     colour_levels = levels(counts)
+
+    cell_levels = {}
+    for offset in range((end - start).days + 1):
+        day = start + timedelta(days=offset)
+        point = (offset // 7, offset % 7)
+        key = day.strftime("%Y-%m-%d")
+        cell_levels[point] = colour_levels.get(key, 0)
+
+    route, eaten_at = plan_route(dict(cell_levels), columns)
+    route_steps = len(route) - 1
+    path = "M " + " L ".join("%d %d" % (col * pitch, row * pitch)
+                               for col, row in route)
 
     s = []
     s.append('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
-             'viewBox="0 0 %d %d" role="img" aria-label="Animated contribution snake for %s">'
+             'viewBox="-16 -32 %d %d" role="img" aria-label="Animated contribution snake for %s">'
              % (width, height, width, height, html.escape(user, quote=True)))
     total = sum(counts.values())
     s.append('<title>%s: %s contributions in the last year</title>'
              % (html.escape(user), "{:,}".format(total)))
 
-    for offset in range((end - start).days + 1):
-        day = start + timedelta(days=offset)
-        col, row = offset // 7, offset % 7
-        x, y = left + col * pitch, top + row * pitch
-        key = day.strftime("%Y-%m-%d")
-        level = colour_levels.get(key, 0)
+    for point in sorted(cell_levels, key=lambda p: (p[0], p[1])):
+        col, row = point
+        x, y = 2 + col * pitch, 2 + row * pitch
+        level = cell_levels[point]
         colour = c["empty"] if level == 0 else c["levels"][level - 1]
-        s.append('<rect x="%.1f" y="%.1f" width="%d" height="%d" rx="2" fill="%s">'
-                 % (x, y, cell, cell, colour))
+        s.append('<rect x="%.1f" y="%.1f" width="%d" height="%d" rx="2" fill="%s" '
+                 'stroke="%s" stroke-width="1">'
+                 % (x, y, cell, cell, colour, c["border"]))
         if level:
-            # Start the animation one cycle in the past so every square has a stable phase
-            # immediately, rather than waiting fourteen seconds for the first complete pass.
-            phase = duration * order_index[(col, row)] / float(route_steps)
-            begin = phase - duration
-            s.append('<animate attributeName="opacity" values="1;0.18;0.18;1" '
-                     'keyTimes="0;0.006;0.92;1" dur="%.1fs" begin="%.3fs" '
-                     'repeatCount="indefinite"/>' % (duration, begin))
+            eaten = eaten_at[point] / float(route_steps)
+            before = max(0.0, eaten - 0.0002)
+            s.append('<animate attributeName="fill" values="%s;%s;%s;%s;%s" '
+                     'keyTimes="0;%.5f;%.5f;0.99;1" dur="%.1fs" begin="-%.1fs" '
+                     'repeatCount="indefinite"/>'
+                     % (colour, colour, c["empty"], c["empty"], colour,
+                        before, eaten, duration, duration))
         s.append('</rect>')
 
-    centers = [(left + col * pitch + cell / 2.0, top + row * pitch + cell / 2.0)
-               for col, row in ordered]
-    # Close the route by following the right edge up and the top row back. Without this
-    # return leg, a looping animation briefly puts the head at the upper-left and its tail
-    # at the lower-right, making one snake look like two unrelated purple marks.
-    right_top = (left + (columns - 1) * pitch + cell / 2.0, top + cell / 2.0)
-    left_top = (left + cell / 2.0, top + cell / 2.0)
-    path = ("M " + " L ".join("%.1f %.1f" % point for point in centers)
-            + " L %.1f %.1f L %.1f %.1f Z" % (right_top + left_top))
+    # The lower strip fills in four colour stages as the corresponding cells are eaten.
+    active_count = sum(1 for level in cell_levels.values() if level)
+    track_width = columns * pitch
+    progress_x = 0.0
+    for level in range(1, 5):
+        points = [point for point, value in cell_levels.items() if value == level]
+        if not points:
+            continue
+        segment_width = track_width * len(points) / float(active_count)
+        stage_start = min(eaten_at[point] for point in points) / float(route_steps)
+        stage_end = max(eaten_at[point] for point in points) / float(route_steps)
+        stage_end = min(0.985, max(stage_start + 0.001, stage_end))
+        s.append('<rect x="%.1f" y="144" width="0" height="12" rx="1" fill="%s">'
+                 % (progress_x, c["levels"][level - 1]))
+        s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" '
+                 'keyTimes="0;%.5f;%.5f;0.99;1" dur="%.1fs" begin="-%.1fs" '
+                 'repeatCount="indefinite"/></rect>'
+                 % (segment_width, segment_width, stage_start, stage_end, duration, duration))
+        progress_x += segment_width
 
-    # The tail uses the same path with small time offsets. Negative starts preload a full
-    # snake on the very first frame instead of letting the body appear one piece at a time.
+    # Four differently sized blocks make the tapered purple snake used by the reference.
+    # Drawing the tail first keeps the larger head visible when the route crosses itself.
+    pieces = ((14.4, 0.8, 4.5), (12.3, 1.8, 4.1),
+              (10.8, 2.6, 3.6), (9.9, 3.0, 3.3))
     segment_delay = duration / float(route_steps)
-    for i in range(6, 0, -1):
-        begin = -duration + i * segment_delay
-        opacity = 0.42 + (6 - i) * 0.09
-        colour = c["snake_tail"] if i > 3 else c["snake"]
-        s.append('<rect x="-5" y="-5" width="10" height="10" rx="3" fill="%s" '
-                 'opacity="%.2f"><animateMotion path="%s" dur="%.1fs" begin="%.3fs" '
-                 'repeatCount="indefinite" rotate="auto"/></rect>'
-                 % (colour, opacity, path, duration, begin))
-
-    s.append('<g><circle cx="0" cy="0" r="6" fill="%s"/>' % c["snake"])
-    s.append('<circle cx="2.2" cy="-2.0" r="1.15" fill="%s"/>' % c["eye"])
-    s.append('<circle cx="2.2" cy="2.0" r="1.15" fill="%s"/>' % c["eye"])
-    s.append('<animateMotion path="%s" dur="%.1fs" begin="-%.1fs" '
-             'repeatCount="indefinite" rotate="auto"/></g>' % (path, duration, duration))
+    for index in range(3, -1, -1):
+        size, inset, radius = pieces[index]
+        begin = -duration + index * segment_delay
+        s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="%.1f" '
+                 'fill="%s"><animateMotion path="%s" dur="%.1fs" begin="%.3fs" '
+                 'repeatCount="indefinite"/></rect>'
+                 % (inset, inset, size, size, radius, c["snake"],
+                    path, duration, begin))
     s.append('</svg>')
     return "\n".join(s) + "\n"
 
