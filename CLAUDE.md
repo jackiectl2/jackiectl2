@@ -127,7 +127,7 @@ Action 以 **`jackiectl` + `272573266+jackiectl@users.noreply.github.com`** 提�
 
 GitHub 按 commit **author** 归属贡献, 所以这个 commit 自己就是一次 contribution ——
 于是 Total Commits +1 → **下次运行必定发现数字变了 → 必定再提交一次**.
-刷新因此变成**自维持**的: 每个 schedule 槽固定产出一个 commit (现在 8 小时一次, 3 次/天),
+刷新因此变成**自维持**的: 每个 schedule 槽固定产出一个 commit (2026-09-22 起改成一天 1 次),
 而不是"只在有真实活动时才提交". `git diff --cached --quiet` 那个短路实际上永远不会命中.
 
 > trailer 用**两个 `-m`** 写, 不要写成一个多行字符串 —— YAML 块标量会把缩进带进 message,
@@ -165,9 +165,10 @@ fill 是 `#427b58`(深绿) 不是浅灰, 白底上读得清.
 
 ## 3. workflow: `.github/workflows/stats-cards.yml` (唯一一个)
 
-`cron: "7 */8 * * *"`(每 8 小时: `00:07 / 08:07 / 16:07 UTC`, 每天 3 次) + `workflow_dispatch`
+`cron: "7 8 * * *"`(每天 1 次, `08:07 UTC` = 04:07 EDT) + `workflow_dispatch`
 + 改到 `tools/**` / `data/profile.json` / 自身时触发.
-⚠ 小时步长要**能整除 24** —— 写 `*/9` 会变成 `00/09/18`, 最后一段只隔 6 小时, 不是等间隔.
+⚠ 2026-09-22 前是 `7 */8 * * *`(3 次/天). 若哪天改回多次刷新, 小时步长要**能整除 24** ——
+写 `*/9` 会变成 `00/09/18`, 最后一段只隔 6 小时, 不是等间隔.
 
 ### 28 天刷新 + 1 天休息的循环 (用户 2026-07-23 定)
 

@@ -14,17 +14,18 @@ name: Refresh profile cards
 
 on:
   schedule:
-    # Every eight hours: 00:07, 08:07, 16:07 UTC. Evenly spaced, because 8 divides 24 —
-    # a */9 would have fired at 00/09/18 and left a six-hour gap at the end of each day.
+    # Once a day, at 08:07 UTC. Was every eight hours (00:07 / 08:07 / 16:07) until
+    # 2026-09-22; three refreshes a day bought nothing but three commits a day.
     #
     # Minute 7 rather than 0 on purpose: GitHub queues scheduled runs and the top of the hour
-    # is the most contended slot, so :07 starts sooner in practice.
+    # is the most contended slot, so :07 starts sooner in practice. Hour 8 because a queued
+    # run lands hours late in practice, which puts this one in the owner's morning (EDT).
     #
     # The cards are served from assets/ through /raw/, which is not behind camo, so a viewer
     # sees a new number the moment this job commits — this interval is the only latency there is.
     #
     # Every 29th day is skipped; the "Decide whether today is a rest day" step below explains why.
-    - cron: "7 */8 * * *"
+    - cron: "7 8 * * *"
   workflow_dispatch:
   push:
     paths:
