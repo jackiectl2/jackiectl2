@@ -115,7 +115,7 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 - [Website](https://jackiectl.com)
 - [LinkedIn](https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/)
 - [Email](mailto:ctlang@umich.edu)
-- **jackiectl.com** — Dim Sum Parlor — a 3D teahouse you can walk through *(coming soon)*
+- **jackiectl.com**  *(coming soon)*
 - **Google Scholar** *(coming soon)*
 
 ---
