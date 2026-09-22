@@ -1,7 +1,9 @@
 # CLAUDE.md — profile-readme
 
-GitHub **profile README** 仓库: `github.com/jackiectl/jackiectl`
+GitHub **profile README** 仓库: `github.com/jackiectl2/jackiectl2`
 (⚠ 仓库名必须与用户名**完全相同**, `README.md` 才会显示在 profile 页顶部. 别改名.)
+推送走 SSH 别名 `github-jackiectl2`; commit 身份 `305351710+jackiectl2@users.noreply.github.com`
+(已在本仓库 local 覆盖). 下面 §0 讲的是老仓库 `jackiectl/jackiectl` 的历史, 教训仍适用.
 
 父目录 `personal_website/CLAUDE.md` 和全局 `~/.claude/CLAUDE.md` 会自动叠加, 这里不重复.
 
@@ -23,17 +25,24 @@ GitHub **profile README** 仓库: `github.com/jackiectl/jackiectl`
 
 ---
 
-## 1. 最重要的一条: README.md 是**生成物**, 不要手改
+## 1. README.md 可以手改 —— workflow 不再碰它 (2026-09-22 改)
+
+**旧规则已作废**: 原本写的是 "README 是生成物, 不要手改", 因为 refresh workflow 每次都跑
+`build.py`. 用户多次在 GitHub 网页上改 README, **每次都被下一次 refresh 静默还原**
+(实例: `12a1536`→`fcebf6e`, `aa5a0a8`→`2e25cf9`, `145be16`→`fd32f7a`). 已改掉.
 
 ```
-data/profile.json   ← 唯一可编辑的内容源 (PROFILE.md 的机读投影)
-       ↓  python3 build.py
-README.md           ← 生成物. 手改会被下次 build 覆盖
+data/profile.json   ← 内容源 (PROFILE.md 的机读投影)
+       ↓  python3 build.py   ← 只能手跑, CI 不再调它
+README.md           ← 可以直接手改 (网页编辑器也行), refresh 不会动它
 ```
 
-- **加一个项目 / 一条 timeline** = 往 `data/profile.json` 加一条 → `python3 build.py`.
-  **不改 `build.py`, 不改 README.** 这就是铁律 B 在本仓库的落地.
-- `python3 build.py --check` → README 与 JSON 不一致时 exit 1 (可做 CI).
+- **卡片数字更新根本不需要重写 README** —— README 里引用的是固定路径
+  `assets/stats-dark.svg` 这类, SVG 文件内容一变图就变了. 那一步 `build.py` 纯属多余.
+- ❗ **`build.py` 仍然是全文覆写**. 手改了 README 而没镜像进 `profile.json`, 哪天手跑一次
+  就丢. **两边要么同步改, 要么就别跑 `build.py`.** `python3 build.py --check` 可查两边是否一致.
+- **加一个项目 / 一条 timeline** 仍然是往 `data/profile.json` 加一条 → `python3 build.py`
+  → 自己 commit README. **不改 `build.py`.** 这就是铁律 B 在本仓库的落地.
 - 事实源仍是 `../PROFILE.md`. **先改 PROFILE.md, 再把改动镜像进 `profile.json`.**
 
 ## 2. 卡片: 四张全部自建 (2026-09-20)
@@ -175,7 +184,8 @@ fill 是 `#427b58`(深绿) 不是浅灰, 白底上读得清.
   10 年模拟里连续工作段长度集合恒为 `[28]`.
 - ⚠ **副作用**: 休息日如果没有别的提交, 贡献连续天数会断. Longest Streak 会稳定在 28 左右,
   Current Streak 每 29 天归零一次 —— 这是这个设计的必然结果, 不是 bug.
-一次跑完: 报告用了哪个 token → 生成 stats(暗/亮) → streak → 贡献图 → 贡献蛇 → `build.py` → **只在有变化时提交一次**.
+一次跑完: 报告用了哪个 token → 生成 stats(暗/亮) → streak → 贡献图 → 贡献蛇 → **只在有变化时提交一次**.
+🔴 **只 `git add assets`, 不碰 README.md** —— 见 §1.
 
 - ⚠ **我的 PAT 触发不了它** (`Workflows: RW` 是改文件, 运行要 `Actions` 权限, 没有).
   要手动跑: 用户在 Actions 页点, 或推一个动到上述路径的 commit.

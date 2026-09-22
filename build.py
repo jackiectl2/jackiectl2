@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """Render README.md from data/profile.json.
 
-README.md is generated — edit data/profile.json (and PROFILE.md upstream), never the
-README itself. Adding a project or a timeline row must never require touching this file:
-everything here loops over the data (see the no-hardcoded-counts rule in CLAUDE.md).
+Run by hand only. The refresh workflow used to call this on every run, which rewrote
+README.md wholesale and silently reverted every edit made in the GitHub web editor. It
+now touches assets/ alone, so README.md is safe to edit directly.
 
-    python3 build.py            # write README.md
-    python3 build.py --check    # exit 1 if README.md is stale (for CI)
+That cuts both ways: this script still overwrites the whole file, so a hand edit that was
+not mirrored into data/profile.json is lost the next time it runs. Keep the two in step,
+or leave the script alone. Adding a project or a timeline row must never require touching
+this file: everything here loops over the data (the no-hardcoded-counts rule in CLAUDE.md).
+
+    python3 build.py            # rewrite README.md from the data (discards hand edits)
+    python3 build.py --check    # exit 1 if README.md and the data disagree
 """
 
 import json
