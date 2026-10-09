@@ -269,22 +269,12 @@ def render_daily(dates, counts, theme, total):
              '%s in the last %d days</text>'
              % (W - pad_r, fam, c["muted"], "{:,}".format(total), n))
 
-    # One nine-second loop: a short pause, a 3.6s left-to-right draw, then the completed
-    # graph stays still long enough to read.  The near-adjacent final key times reset the
-    # clip between frames instead of visibly wiping it backwards.
-    animation_duration = "9s"
+    # One ten-second loop: a short pause, a four-second left-to-right draw, time to read,
+    # then a soft fade back to a faint full-graph trace.  The trace means the plot never
+    # flashes empty while the clip resets for the next pass.
+    animation_duration = "10s"
     animation_times = "0;0.05;0.45;0.999;1"
     reveal_width = plot_w + 6
-    s.append('<defs>')
-    s.append('<clipPath id="daily-graph-reveal">')
-    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f">'
-             % (pad_l - 3, pad_t - 4, reveal_width, plot_h + 24))
-    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" keyTimes="%s" '
-             'dur="%s" repeatCount="indefinite" calcMode="linear"/>'
-             % (reveal_width, reveal_width, animation_times, animation_duration))
-    s.append('</rect>')
-    s.append('</clipPath>')
-    s.append('</defs>')
 
     # horizontal gridlines + y labels
     for k in range(top // step + 1):
@@ -295,24 +285,54 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # The clip reveals the area, curve and markers together.  Its base width is the full
-    # plot width for a graceful static fallback when a renderer ignores <animate>.
+    # Define the plot marks once, then reuse them as a faint permanent trace and as the
+    # animated foreground.  Unsupported SMIL renderers ignore the opacity animations:
+    # the trace stays at its base opacity of 1 and the foreground stays hidden, yielding
+    # the same complete static graph as before.
     pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
     curve = smooth_path(pts)
-    s.append('<g clip-path="url(#daily-graph-reveal)">')
-    s.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
-             % (curve, X(n - 1), base, X(0), base, c["bar"]))
-    s.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
-             'stroke-linecap="round"/>' % (curve, c["bar"]))
+    marks = []
+    marks.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
+                 % (curve, X(n - 1), base, X(0), base, c["bar"]))
+    marks.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
+                 'stroke-linecap="round"/>' % (curve, c["bar"]))
 
     # a dot per day, and the day-of-month underneath
     step = 1 if n <= 32 else max(1, n // 24)
     for i, (d, v) in enumerate(zip(dates, counts)):
-        s.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>' % (X(i), Y(v), c["bar"]))
+        marks.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>'
+                     % (X(i), Y(v), c["bar"]))
         if i % step == 0 or i == n - 1:
-            s.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
-                     'font-size="10" fill="%s">%d</text>'
-                     % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
+            marks.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
+                         'font-size="10" fill="%s">%d</text>'
+                         % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
+
+    s.append('<defs>')
+    s.append('<clipPath id="daily-graph-reveal">')
+    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f">'
+             % (pad_l - 3, pad_t - 4, reveal_width, plot_h + 24))
+    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" keyTimes="%s" '
+             'dur="%s" repeatCount="indefinite" calcMode="linear"/>'
+             % (reveal_width, reveal_width, animation_times, animation_duration))
+    s.append('</rect>')
+    s.append('</clipPath>')
+    s.append('<g id="daily-graph-marks">')
+    s.extend(marks)
+    s.append('</g>')
+    s.append('</defs>')
+
+    # The base opacity is deliberately 1 for the static fallback.  Animation-capable
+    # renderers immediately turn it into a subtle 14% trace behind the drawing pass.
+    s.append('<g opacity="1">')
+    s.append('<use href="#daily-graph-marks"/>')
+    s.append('<animate attributeName="opacity" values="0.14;0.14" dur="%s" '
+             'repeatCount="indefinite"/>' % animation_duration)
+    s.append('</g>')
+    s.append('<g clip-path="url(#daily-graph-reveal)" opacity="0">')
+    s.append('<use href="#daily-graph-marks"/>')
+    s.append('<animate attributeName="opacity" values="1;1;1;0;0" '
+             'keyTimes="0;0.45;0.72;0.88;1" dur="%s" repeatCount="indefinite"/>'
+             % animation_duration)
     s.append('</g>')
 
     s.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="1"/>'
