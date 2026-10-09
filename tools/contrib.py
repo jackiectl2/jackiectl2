@@ -31,9 +31,11 @@ MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 # Warm palette, matched to the gruvbox themes the other two cards use.
 THEMES = {
     "dark":  {"bar": "#fabd2f", "bar_dim": "#7c6f64", "title": "#fabd2f",
-              "text": "#ebdbb2", "muted": "#a89984", "axis": "#504945"},
+              "text": "#ebdbb2", "muted": "#a89984", "axis": "#504945",
+              "glow": "#fff3bf"},
     "light": {"bar": "#b57614", "bar_dim": "#d5c4a1", "title": "#b57614",
-              "text": "#3c3836", "muted": "#7c6f64", "axis": "#d5c4a1"},
+              "text": "#3c3836", "muted": "#7c6f64", "axis": "#d5c4a1",
+              "glow": "#fabd2f"},
 }
 
 
@@ -236,9 +238,9 @@ def smooth_path(pts):
 def render_daily(dates, counts, theme, total):
     """Daily area chart: the shape the third-party card drew, with our data and palette.
 
-    The plot draws itself from left to right with declarative SVG animation.  The base
-    clip rectangle is fully open, so renderers that do not support SMIL still get the
-    complete static graph.  No <style> and no <script>: GitHub strips both.
+    A soft highlight scans along the complete curve using declarative SVG animation.
+    Renderers that do not support SMIL still get the complete static graph.  No <style>
+    and no <script>: GitHub strips both.
     """
     c = THEMES[theme]
     # Plot height is set from the width, not picked by eye: the borrowed chart ran a
@@ -269,12 +271,9 @@ def render_daily(dates, counts, theme, total):
              '%s in the last %d days</text>'
              % (W - pad_r, fam, c["muted"], "{:,}".format(total), n))
 
-    # One ten-second loop: a short pause, a four-second left-to-right draw, time to read,
-    # then a soft fade back to a faint full-graph trace.  The trace means the plot never
-    # flashes empty while the clip resets for the next pass.
-    animation_duration = "10s"
-    animation_times = "0;0.05;0.45;0.999;1"
-    reveal_width = plot_w + 6
+    # The graph itself never disappears.  A three-layer glow travels along it for a little
+    # over five seconds, fades before resetting, then pauses before the next scan.
+    animation_duration = "8s"
 
     # horizontal gridlines + y labels
     for k in range(top // step + 1):
@@ -285,10 +284,8 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # Define the plot marks once, then reuse them as a faint permanent trace and as the
-    # animated foreground.  Unsupported SMIL renderers ignore the opacity animations:
-    # the trace stays at its base opacity of 1 and the foreground stays hidden, yielding
-    # the same complete static graph as before.
+    # Define the static plot marks once.  Only the small scanner below is animated, so the
+    # chart remains fully readable throughout the cycle.
     pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
     curve = smooth_path(pts)
     marks = []
@@ -308,30 +305,25 @@ def render_daily(dates, counts, theme, total):
                          % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
 
     s.append('<defs>')
-    s.append('<clipPath id="daily-graph-reveal">')
-    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f">'
-             % (pad_l - 3, pad_t - 4, reveal_width, plot_h + 24))
-    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" keyTimes="%s" '
-             'dur="%s" repeatCount="indefinite" calcMode="linear"/>'
-             % (reveal_width, reveal_width, animation_times, animation_duration))
-    s.append('</rect>')
-    s.append('</clipPath>')
     s.append('<g id="daily-graph-marks">')
     s.extend(marks)
     s.append('</g>')
     s.append('</defs>')
 
-    # The base opacity is deliberately 1 for the static fallback.  Animation-capable
-    # renderers immediately turn it into a subtle 14% trace behind the drawing pass.
-    s.append('<g opacity="1">')
     s.append('<use href="#daily-graph-marks"/>')
-    s.append('<animate attributeName="opacity" values="0.14;0.14" dur="%s" '
-             'repeatCount="indefinite"/>' % animation_duration)
-    s.append('</g>')
-    s.append('<g clip-path="url(#daily-graph-reveal)" opacity="0">')
-    s.append('<use href="#daily-graph-marks"/>')
-    s.append('<animate attributeName="opacity" values="1;1;1;0;0" '
-             'keyTimes="0;0.45;0.72;0.88;1" dur="%s" repeatCount="indefinite"/>'
+
+    # Concentric translucent circles read as a compact beam without filters (which are
+    # inconsistently handled by README renderers).  The group fades before its invisible
+    # return trip, so the loop has no teleporting flash.
+    s.append('<g opacity="0">')
+    s.append('<circle r="10" fill="%s" opacity="0.10"/>' % c["bar"])
+    s.append('<circle r="6" fill="%s" opacity="0.24"/>' % c["bar"])
+    s.append('<circle r="2.8" fill="%s"/>' % c["glow"])
+    s.append('<animateMotion path="%s" keyPoints="0;0;1;1;0" '
+             'keyTimes="0;0.08;0.72;0.9;1" dur="%s" repeatCount="indefinite" '
+             'calcMode="linear"/>' % (curve, animation_duration))
+    s.append('<animate attributeName="opacity" values="0;1;1;0;0" '
+             'keyTimes="0;0.08;0.68;0.72;1" dur="%s" repeatCount="indefinite"/>'
              % animation_duration)
     s.append('</g>')
 
