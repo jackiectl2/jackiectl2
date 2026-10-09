@@ -233,12 +233,12 @@ def smooth_path(pts):
     return " ".join(d)
 
 
-def render_daily(dates, counts, theme, total):
+def render_daily(dates, counts, theme, total, visible_days=31, cycle_seconds=45):
     """Daily area chart: the shape the third-party card drew, with our data and palette.
 
-    The plot draws itself from left to right with declarative SVG animation.  The base
-    clip rectangle is fully open, so renderers that do not support SMIL still get the
-    complete static graph.  No <style> and no <script>: GitHub strips both.
+    A one-month viewport scrolls continuously over a repeated multi-month data strip.
+    Renderers that do not support SMIL get the first complete static viewport.  No
+    <style> and no <script>: GitHub strips both.
     """
     c = THEMES[theme]
     # Plot height is set from the width, not picked by eye: the borrowed chart ran a
@@ -249,32 +249,28 @@ def render_daily(dates, counts, theme, total):
     H = int(round((W - pad_l - pad_r) * 0.25)) + pad_t + pad_b
     plot_w, plot_h = W - pad_l - pad_r, H - pad_t - pad_b
     n = len(dates)
+    visible_days = max(2, int(visible_days))
+    day_px = plot_w / float(visible_days - 1)
+    cycle_width = n * day_px
     top, step = nice_axis(max(counts) if counts else 1)
     fam = "-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif"
     base = pad_t + plot_h
 
     def X(i):
-        return pad_l if n == 1 else pad_l + plot_w * i / float(n - 1)
+        return pad_l + day_px * i
 
     def Y(v):
         return base - (float(v) / top) * plot_h
 
     s = []
     s.append('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
-             'role="img" aria-label="Contributions per day">' % (W, H, W, H))
+             'role="img" aria-label="Scrolling contributions per day">' % (W, H, W, H))
     s.append('<title>%d contributions over the last %d days</title>' % (total, n))
     s.append('<text x="%d" y="26" font-family="%s" font-size="15" font-weight="600" fill="%s">'
              'Contribution Graph</text>' % (pad_l - 30, fam, c["title"]))
     s.append('<text x="%d" y="26" text-anchor="end" font-family="%s" font-size="13" fill="%s">'
-             '%s in the last %d days</text>'
-             % (W - pad_r, fam, c["muted"], "{:,}".format(total), n))
-
-    # One ten-second loop: a short pause, a four-second left-to-right draw, time to read,
-    # then a soft fade back to a faint full-graph trace.  The trace means the plot never
-    # flashes empty while the clip resets for the next pass.
-    animation_duration = "10s"
-    animation_times = "0;0.05;0.45;0.999;1"
-    reveal_width = plot_w + 6
+             '%d-day loop · %d-day window</text>'
+             % (W - pad_r, fam, c["muted"], n, visible_days))
 
     # horizontal gridlines + y labels
     for k in range(top // step + 1):
@@ -285,10 +281,10 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # Define the plot marks once, then reuse them as a faint permanent trace and as the
-    # animated foreground.  Unsupported SMIL renderers ignore the opacity animations:
-    # the trace stays at its base opacity of 1 and the foreground stays hidden, yielding
-    # the same complete static graph as before.
+    # One cycle holds all history at the same per-day spacing as the original 31-day chart.
+    # A second copy follows it so the viewport stays populated as the first copy exits.
+    # The paths are deliberately separate: the loop never invents a line between today's
+    # count and the oldest count.
     pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
     curve = smooth_path(pts)
     marks = []
@@ -298,41 +294,33 @@ def render_daily(dates, counts, theme, total):
                  'stroke-linecap="round"/>' % (curve, c["bar"]))
 
     # a dot per day, and the day-of-month underneath
-    step = 1 if n <= 32 else max(1, n // 24)
+    label_step = 1
     for i, (d, v) in enumerate(zip(dates, counts)):
         marks.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>'
                      % (X(i), Y(v), c["bar"]))
-        if i % step == 0 or i == n - 1:
+        if i % label_step == 0 or i == n - 1:
             marks.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
                          'font-size="10" fill="%s">%d</text>'
                          % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
 
     s.append('<defs>')
-    s.append('<clipPath id="daily-graph-reveal">')
-    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f">'
-             % (pad_l - 3, pad_t - 4, reveal_width, plot_h + 24))
-    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" keyTimes="%s" '
-             'dur="%s" repeatCount="indefinite" calcMode="linear"/>'
-             % (reveal_width, reveal_width, animation_times, animation_duration))
-    s.append('</rect>')
+    s.append('<clipPath id="daily-graph-window">')
+    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f"/>'
+             % (pad_l - 3, pad_t - 4, plot_w + 6, plot_h + 24))
     s.append('</clipPath>')
     s.append('<g id="daily-graph-marks">')
     s.extend(marks)
     s.append('</g>')
     s.append('</defs>')
 
-    # The base opacity is deliberately 1 for the static fallback.  Animation-capable
-    # renderers immediately turn it into a subtle 14% trace behind the drawing pass.
-    s.append('<g opacity="1">')
+    s.append('<g clip-path="url(#daily-graph-window)">')
+    s.append('<g>')
     s.append('<use href="#daily-graph-marks"/>')
-    s.append('<animate attributeName="opacity" values="0.14;0.14" dur="%s" '
-             'repeatCount="indefinite"/>' % animation_duration)
+    s.append('<use href="#daily-graph-marks" x="%.2f"/>' % cycle_width)
+    s.append('<animateTransform attributeName="transform" type="translate" '
+             'from="0 0" to="-%.2f 0" dur="%ss" repeatCount="indefinite" '
+             'calcMode="linear"/>' % (cycle_width, cycle_seconds))
     s.append('</g>')
-    s.append('<g clip-path="url(#daily-graph-reveal)" opacity="0">')
-    s.append('<use href="#daily-graph-marks"/>')
-    s.append('<animate attributeName="opacity" values="1;1;1;0;0" '
-             'keyTimes="0;0.45;0.72;0.88;1" dur="%s" repeatCount="indefinite"/>'
-             % animation_duration)
     s.append('</g>')
 
     s.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="1"/>'
@@ -369,7 +357,9 @@ def main():
         make = lambda theme: render(keys, counts, total, theme, user)
         label = "%d months" % n
     else:
-        n = int(cfg.get("days", 31))
+        visible_days = int(cfg.get("days", 31))
+        n = int(cfg.get("scroll_days", visible_days))
+        cycle_seconds = int(cfg.get("scroll_seconds", 45))
         start = now - timedelta(days=n - 1)
         daily = fetch_daily(token, user, start, now)
         dates = ["%04d-%02d-%02d" % ((start + timedelta(days=k)).year,
@@ -377,7 +367,8 @@ def main():
                                      (start + timedelta(days=k)).day) for k in range(n)]
         counts = [daily.get(dt, 0) for dt in dates]
         total = sum(counts)
-        make = lambda theme: render_daily(dates, counts, theme, total)
+        make = lambda theme: render_daily(dates, counts, theme, total,
+                                          visible_days, cycle_seconds)
         label = "%d days" % n
 
     if not os.path.isdir(ASSETS):
