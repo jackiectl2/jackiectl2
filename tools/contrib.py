@@ -269,11 +269,11 @@ def render_daily(dates, counts, theme, total):
              '%s in the last %d days</text>'
              % (W - pad_r, fam, c["muted"], "{:,}".format(total), n))
 
-    # One ten-second loop: a short pause, a four-second left-to-right draw, time to read,
-    # then a soft fade back to a faint full-graph trace.  The trace means the plot never
-    # flashes empty while the clip resets for the next pass.
-    animation_duration = "10s"
-    animation_times = "0;0.05;0.45;0.999;1"
+    # One twelve-second loop: pause, draw left-to-right, hold the complete graph, erase it
+    # right-to-left, then pause before drawing again.  Both transitions use the same clip,
+    # so there is no discontinuous reset or blank-frame flash.
+    animation_duration = "12s"
+    animation_times = "0;0.0417;0.2917;0.5;0.75;1"
     reveal_width = plot_w + 6
 
     # horizontal gridlines + y labels
@@ -285,10 +285,9 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # Define the plot marks once, then reuse them as a faint permanent trace and as the
-    # animated foreground.  Unsupported SMIL renderers ignore the opacity animations:
-    # the trace stays at its base opacity of 1 and the foreground stays hidden, yielding
-    # the same complete static graph as before.
+    # Define the plot marks once and reveal them through the animated clip.  Unsupported
+    # SMIL renderers use the clip rectangle's full base width and show the complete static
+    # graph, just as before.
     pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
     curve = smooth_path(pts)
     marks = []
@@ -311,7 +310,7 @@ def render_daily(dates, counts, theme, total):
     s.append('<clipPath id="daily-graph-reveal">')
     s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f">'
              % (pad_l - 3, pad_t - 4, reveal_width, plot_h + 24))
-    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" keyTimes="%s" '
+    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0;0" keyTimes="%s" '
              'dur="%s" repeatCount="indefinite" calcMode="linear"/>'
              % (reveal_width, reveal_width, animation_times, animation_duration))
     s.append('</rect>')
@@ -321,18 +320,8 @@ def render_daily(dates, counts, theme, total):
     s.append('</g>')
     s.append('</defs>')
 
-    # The base opacity is deliberately 1 for the static fallback.  Animation-capable
-    # renderers immediately turn it into a subtle 14% trace behind the drawing pass.
-    s.append('<g opacity="1">')
+    s.append('<g clip-path="url(#daily-graph-reveal)">')
     s.append('<use href="#daily-graph-marks"/>')
-    s.append('<animate attributeName="opacity" values="0.14;0.14" dur="%s" '
-             'repeatCount="indefinite"/>' % animation_duration)
-    s.append('</g>')
-    s.append('<g clip-path="url(#daily-graph-reveal)" opacity="0">')
-    s.append('<use href="#daily-graph-marks"/>')
-    s.append('<animate attributeName="opacity" values="1;1;1;0;0" '
-             'keyTimes="0;0.45;0.72;0.88;1" dur="%s" repeatCount="indefinite"/>'
-             % animation_duration)
     s.append('</g>')
 
     s.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="1"/>'
