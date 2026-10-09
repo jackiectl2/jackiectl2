@@ -23,7 +23,7 @@
 <defs>
 <clipPath id="daily-graph-reveal">
 <rect x="49.0" y="48.0" width="794.0" height="221.0">
-<animate attributeName="width" values="0;0;794.0;794.0;0" keyTimes="0;0.05;0.45;0.999;1" dur="10s" repeatCount="indefinite" calcMode="linear"/>
+<animate attributeName="width" values="0;0;794.0;794.0;0;0" keyTimes="0;0.0417;0.2917;0.5;0.75;1" dur="12s" repeatCount="indefinite" calcMode="linear"/>
 </rect>
 </clipPath>
 <g id="daily-graph-marks">
@@ -93,13 +93,8 @@
 <text x="840.0" y="265.0" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="10" fill="#a89984">9</text>
 </g>
 </defs>
-<g opacity="1">
+<g clip-path="url(#daily-graph-reveal)">
 <use href="#daily-graph-marks"/>
-<animate attributeName="opacity" values="0.14;0.14" dur="10s" repeatCount="indefinite"/>
-</g>
-<g clip-path="url(#daily-graph-reveal)" opacity="0">
-<use href="#daily-graph-marks"/>
-<animate attributeName="opacity" values="1;1;1;0;0" keyTimes="0;0.45;0.72;0.88;1" dur="10s" repeatCount="indefinite"/>
 </g>
 <line x1="52" y1="249.5" x2="840" y2="249.5" stroke="#504945" stroke-width="1"/>
 <text x="446.0" y="287" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="11" fill="#a89984">Days</text>
