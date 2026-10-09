@@ -236,7 +236,9 @@ def smooth_path(pts):
 def render_daily(dates, counts, theme, total):
     """Daily area chart: the shape the third-party card drew, with our data and palette.
 
-    Inline fills only — no <style>, no <script>.
+    The plot draws itself from left to right with declarative SVG animation.  The base
+    clip rectangle is fully open, so renderers that do not support SMIL still get the
+    complete static graph.  No <style> and no <script>: GitHub strips both.
     """
     c = THEMES[theme]
     # Plot height is set from the width, not picked by eye: the borrowed chart ran a
@@ -267,6 +269,23 @@ def render_daily(dates, counts, theme, total):
              '%s in the last %d days</text>'
              % (W - pad_r, fam, c["muted"], "{:,}".format(total), n))
 
+    # One nine-second loop: a short pause, a 3.6s left-to-right draw, then the completed
+    # graph stays still long enough to read.  The near-adjacent final key times reset the
+    # clip between frames instead of visibly wiping it backwards.
+    animation_duration = "9s"
+    animation_times = "0;0.05;0.45;0.999;1"
+    reveal_width = plot_w + 6
+    s.append('<defs>')
+    s.append('<clipPath id="daily-graph-reveal">')
+    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f">'
+             % (pad_l - 3, pad_t - 4, reveal_width, plot_h + 24))
+    s.append('<animate attributeName="width" values="0;0;%.1f;%.1f;0" keyTimes="%s" '
+             'dur="%s" repeatCount="indefinite" calcMode="linear"/>'
+             % (reveal_width, reveal_width, animation_times, animation_duration))
+    s.append('</rect>')
+    s.append('</clipPath>')
+    s.append('</defs>')
+
     # horizontal gridlines + y labels
     for k in range(top // step + 1):
         v = k * step
@@ -276,9 +295,11 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # area under the curve, then the same curve as a line on top
+    # The clip reveals the area, curve and markers together.  Its base width is the full
+    # plot width for a graceful static fallback when a renderer ignores <animate>.
     pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
     curve = smooth_path(pts)
+    s.append('<g clip-path="url(#daily-graph-reveal)">')
     s.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
              % (curve, X(n - 1), base, X(0), base, c["bar"]))
     s.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
@@ -292,6 +313,7 @@ def render_daily(dates, counts, theme, total):
             s.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
                      'font-size="10" fill="%s">%d</text>'
                      % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
+    s.append('</g>')
 
     s.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="1"/>'
              % (pad_l, base + 0.5, W - pad_r, base + 0.5, c["axis"]))
