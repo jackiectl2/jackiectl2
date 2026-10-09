@@ -281,46 +281,42 @@ def render_daily(dates, counts, theme, total, visible_days=31, cycle_seconds=45)
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # One cycle holds all history at the same per-day spacing as the original 31-day chart.
-    # A second copy follows it so the viewport stays populated as the first copy exits.
-    # Repeat the oldest point once at the cycle boundary: it gives the curve and area a
-    # continuous wrap segment instead of a conspicuous one-day hole between the two copies.
-    pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
-    pts.append((X(n), Y(counts[0])))
+    # Draw three cycles as one physical path and animate across the middle two.  Keeping
+    # the loop boundary inside a single path avoids the one-day seam that some SVG
+    # renderers expose when two moving <use> instances meet.  Starting on the second
+    # cycle also gives both animation endpoints identical neighbours, so the reset is
+    # visually seamless.
+    strip_counts = counts * 3
+    strip_dates = dates * 3
+    pts = [(X(i), Y(v)) for i, v in enumerate(strip_counts)]
     curve = smooth_path(pts)
-    marks = []
-    marks.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
-                 % (curve, X(n), base, X(0), base, c["bar"]))
-    marks.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
-                 'stroke-linecap="round"/>' % (curve, c["bar"]))
-
-    # a dot per day, and the day-of-month underneath
-    label_step = 1
-    for i, (d, v) in enumerate(zip(dates, counts)):
-        marks.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>'
-                     % (X(i), Y(v), c["bar"]))
-        if i % label_step == 0 or i == n - 1:
-            marks.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
-                         'font-size="10" fill="%s">%d</text>'
-                         % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
 
     s.append('<defs>')
     s.append('<clipPath id="daily-graph-window">')
     s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f"/>'
              % (pad_l - 3, pad_t - 4, plot_w + 6, plot_h + 24))
     s.append('</clipPath>')
-    s.append('<g id="daily-graph-marks">')
-    s.extend(marks)
-    s.append('</g>')
     s.append('</defs>')
 
     s.append('<g clip-path="url(#daily-graph-window)">')
-    s.append('<g>')
-    s.append('<use href="#daily-graph-marks"/>')
-    s.append('<use href="#daily-graph-marks" x="%.2f"/>' % cycle_width)
+    s.append('<g transform="translate(-%.2f 0)">' % cycle_width)
     s.append('<animateTransform attributeName="transform" type="translate" '
-             'from="0 0" to="-%.2f 0" dur="%ss" repeatCount="indefinite" '
-             'calcMode="linear"/>' % (cycle_width, cycle_seconds))
+             'from="-%.2f 0" to="-%.2f 0" dur="%ss" repeatCount="indefinite" '
+             'calcMode="linear"/>' % (cycle_width, cycle_width * 2, cycle_seconds))
+    s.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
+             % (curve, X(len(strip_counts) - 1), base, X(0), base, c["bar"]))
+    s.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
+             'stroke-linecap="round"/>' % (curve, c["bar"]))
+
+    # a dot per day, and the day-of-month underneath
+    label_step = 1
+    for i, (d, v) in enumerate(zip(strip_dates, strip_counts)):
+        s.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>'
+                 % (X(i), Y(v), c["bar"]))
+        if i % label_step == 0 or i == len(strip_dates) - 1:
+            s.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
+                     'font-size="10" fill="%s">%d</text>'
+                     % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
     s.append('</g>')
     s.append('</g>')
 
