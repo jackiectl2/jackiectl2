@@ -283,13 +283,14 @@ def render_daily(dates, counts, theme, total, visible_days=31, cycle_seconds=45)
 
     # One cycle holds all history at the same per-day spacing as the original 31-day chart.
     # A second copy follows it so the viewport stays populated as the first copy exits.
-    # The paths are deliberately separate: the loop never invents a line between today's
-    # count and the oldest count.
+    # Repeat the oldest point once at the cycle boundary: it gives the curve and area a
+    # continuous wrap segment instead of a conspicuous one-day hole between the two copies.
     pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
+    pts.append((X(n), Y(counts[0])))
     curve = smooth_path(pts)
     marks = []
     marks.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
-                 % (curve, X(n - 1), base, X(0), base, c["bar"]))
+                 % (curve, X(n), base, X(0), base, c["bar"]))
     marks.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
                  'stroke-linecap="round"/>' % (curve, c["bar"]))
 
