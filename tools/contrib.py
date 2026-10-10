@@ -233,10 +233,12 @@ def smooth_path(pts):
     return " ".join(d)
 
 
-def render_daily(dates, counts, theme, total):
+def render_daily(dates, counts, theme, total, visible_days=31, cycle_seconds=45):
     """Daily area chart: the shape the third-party card drew, with our data and palette.
 
-    Inline fills only — no <style>, no <script>.
+    A one-month viewport scrolls continuously over a repeated multi-month data strip.
+    Renderers that do not support SMIL get the first complete static viewport.  No
+    <style> and no <script>: GitHub strips both.
     """
     c = THEMES[theme]
     # Plot height is set from the width, not picked by eye: the borrowed chart ran a
@@ -247,25 +249,28 @@ def render_daily(dates, counts, theme, total):
     H = int(round((W - pad_l - pad_r) * 0.25)) + pad_t + pad_b
     plot_w, plot_h = W - pad_l - pad_r, H - pad_t - pad_b
     n = len(dates)
+    visible_days = max(2, int(visible_days))
+    day_px = plot_w / float(visible_days - 1)
+    cycle_width = n * day_px
     top, step = nice_axis(max(counts) if counts else 1)
     fam = "-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif"
     base = pad_t + plot_h
 
     def X(i):
-        return pad_l if n == 1 else pad_l + plot_w * i / float(n - 1)
+        return pad_l + day_px * i
 
     def Y(v):
         return base - (float(v) / top) * plot_h
 
     s = []
     s.append('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" '
-             'role="img" aria-label="Contributions per day">' % (W, H, W, H))
+             'role="img" aria-label="Scrolling contributions per day">' % (W, H, W, H))
     s.append('<title>%d contributions over the last %d days</title>' % (total, n))
     s.append('<text x="%d" y="26" font-family="%s" font-size="15" font-weight="600" fill="%s">'
              'Contribution Graph</text>' % (pad_l - 30, fam, c["title"]))
     s.append('<text x="%d" y="26" text-anchor="end" font-family="%s" font-size="13" fill="%s">'
-             '%s in the last %d days</text>'
-             % (W - pad_r, fam, c["muted"], "{:,}".format(total), n))
+             '%d-day loop · %d-day window</text>'
+             % (W - pad_r, fam, c["muted"], n, visible_days))
 
     # horizontal gridlines + y labels
     for k in range(top // step + 1):
@@ -276,22 +281,44 @@ def render_daily(dates, counts, theme, total):
         s.append('<text x="%d" y="%.1f" text-anchor="end" font-family="%s" font-size="10" '
                  'fill="%s">%d</text>' % (pad_l - 8, y + 3.5, fam, c["muted"], v))
 
-    # area under the curve, then the same curve as a line on top
-    pts = [(X(i), Y(v)) for i, v in enumerate(counts)]
+    # Draw three cycles as one physical path and animate across the middle two.  Keeping
+    # the loop boundary inside a single path avoids the one-day seam that some SVG
+    # renderers expose when two moving <use> instances meet.  Starting on the second
+    # cycle also gives both animation endpoints identical neighbours, so the reset is
+    # visually seamless.
+    strip_counts = counts * 3
+    strip_dates = dates * 3
+    pts = [(X(i), Y(v)) for i, v in enumerate(strip_counts)]
     curve = smooth_path(pts)
+
+    s.append('<defs>')
+    s.append('<clipPath id="daily-graph-window">')
+    s.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f"/>'
+             % (pad_l - 3, pad_t - 4, plot_w + 6, plot_h + 24))
+    s.append('</clipPath>')
+    s.append('</defs>')
+
+    s.append('<g clip-path="url(#daily-graph-window)">')
+    s.append('<g transform="translate(-%.2f 0)">' % cycle_width)
+    s.append('<animateTransform attributeName="transform" type="translate" '
+             'from="-%.2f 0" to="-%.2f 0" dur="%ss" repeatCount="indefinite" '
+             'calcMode="linear"/>' % (cycle_width, cycle_width * 2, cycle_seconds))
     s.append('<path d="%s L %.2f %.2f L %.2f %.2f Z" fill="%s" opacity="0.18"/>'
-             % (curve, X(n - 1), base, X(0), base, c["bar"]))
+             % (curve, X(len(strip_counts) - 1), base, X(0), base, c["bar"]))
     s.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" '
              'stroke-linecap="round"/>' % (curve, c["bar"]))
 
     # a dot per day, and the day-of-month underneath
-    step = 1 if n <= 32 else max(1, n // 24)
-    for i, (d, v) in enumerate(zip(dates, counts)):
-        s.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>' % (X(i), Y(v), c["bar"]))
-        if i % step == 0 or i == n - 1:
+    label_step = 1
+    for i, (d, v) in enumerate(zip(strip_dates, strip_counts)):
+        s.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>'
+                 % (X(i), Y(v), c["bar"]))
+        if i % label_step == 0 or i == len(strip_dates) - 1:
             s.append('<text x="%.1f" y="%.1f" text-anchor="middle" font-family="%s" '
                      'font-size="10" fill="%s">%d</text>'
                      % (X(i), base + 16, fam, c["muted"], int(d.split("-")[2])))
+    s.append('</g>')
+    s.append('</g>')
 
     s.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="1"/>'
              % (pad_l, base + 0.5, W - pad_r, base + 0.5, c["axis"]))
@@ -327,7 +354,9 @@ def main():
         make = lambda theme: render(keys, counts, total, theme, user)
         label = "%d months" % n
     else:
-        n = int(cfg.get("days", 31))
+        visible_days = int(cfg.get("days", 31))
+        n = int(cfg.get("scroll_days", visible_days))
+        cycle_seconds = int(cfg.get("scroll_seconds", 45))
         start = now - timedelta(days=n - 1)
         daily = fetch_daily(token, user, start, now)
         dates = ["%04d-%02d-%02d" % ((start + timedelta(days=k)).year,
@@ -335,7 +364,8 @@ def main():
                                      (start + timedelta(days=k)).day) for k in range(n)]
         counts = [daily.get(dt, 0) for dt in dates]
         total = sum(counts)
-        make = lambda theme: render_daily(dates, counts, theme, total)
+        make = lambda theme: render_daily(dates, counts, theme, total,
+                                          visible_days, cycle_seconds)
         label = "%d days" % n
 
     if not os.path.isdir(ASSETS):
