@@ -12,7 +12,7 @@
 
 </div>
 
-B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across LLM-guided incentive design, genomic foundation models, and AI-guided environmental sensing. Previously Mechanical Engineering at Shanghai Jiao Tong University.
+B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across LLM-inference, foundation models, and AI4S. Previously Mechanical Engineering at Shanghai Jiao Tong University.
 
 ## GitHub
 
@@ -42,7 +42,7 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 ## Timeline
 
 - `2026 — present` · **Research, University of Michigan**  
-  LLM incentive design, genomic foundation models, environmental sensing, materials-science tooling, microbial representation learning.
+  LLM Inference, foundation models, AI4S, full-stack development.
 - `2025 — present` · **B.S.E. Data Science, University of Michigan, Ann Arbor**  
   Machine Learning · Computer Graphics & Generative Models · Computational Linguistics · Algorithms & Data Structures · Probability & Statistics.
 - `2025.05` · **Teaching Assistant, General Physics**
@@ -50,14 +50,14 @@ B.S.E. in Data Science at the University of Michigan, Ann Arbor. Working across 
 - `2025.01` · **MCM/ICM — Honorable Mention**  
   COMAP Mathematical Contest in Modeling.
 - `2024 — 2025` · **Mars Asia — Global IT Service Center**  
-  WeCom full-stack development (JavaScript, Node.js, Vue.js): API and interface work, data migration, cross-platform retrieval, and automation that kept operations continuous through a system migration.
+  WeCom full-stack development : API and interface work, data migration, cross-platform retrieval, and automation that kept operations continuous through a system migration.
 - `2023 — 2025.05` · **Mechanical Engineering, Shanghai Jiao Tong University**  
   Applied Linear Algebra · Dynamical Systems · Design & Manufacturing · Dynamics & Vibrations.
 - `…` · *To be continued · 敬請期待*
 
 ## Research
 
-<details>
+<!-- <details>
 <summary><b>LLM for Incentive Design in Mobility Systems</b> — <i>Can an LLM design the incentives that make shared mobility actually work?</i></summary>
 
 An LLM-guided workflow that generates and evaluates interpretable incentive policies for ride-hailing, transit, and shared vehicles — pairing learning-based methods with classical optimization.
@@ -90,9 +90,9 @@ JavaScript front end + Python back end serving the materials community: users up
 
 Proteogenic k-mer tokenization yields interpretable, parameter-free genome encodings that plug into both classical statistics and pretrained sequence models (Evo, ESM, ProtT5). Abundance-weighted community embeddings, leakage-safe features, permutation tests and honest cross-validation.
 
-</details>
+</details> -->
 
-*More steamers on the next cart · 敬請期待*
+*To be continued · 敬請期待*
 
 ## Publications
 
@@ -115,13 +115,12 @@ Proteogenic k-mer tokenization yields interpretable, parameter-free genome encod
 - [Website](https://jackiectl.com)
 - [LinkedIn](https://www.linkedin.com/in/tianlang-jackie-chen-77a152370/)
 - [Email](mailto:ctlang@umich.edu)
-- **jackiectl.com** *(coming soon)*
 - **Google Scholar** *(coming soon)*
 
 ---
 
 <div align="center">
 
-<sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub>
+<!-- <sub>A stack of steamers, reduced along the last dimension, is one Tianlang (Jackie) Chen.</sub> -->
 
 </div>
